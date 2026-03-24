@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova*</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF8F5;
+    --warm-white: #FFFFFF;
+    --ink: #1A1814;
+    --ink-light: #4A4640;
+    --ink-faint: #9A958F;
+    --accent: #C4873C;
+    --accent-light: #E8C99A;
+    --accent-faint: #F5ECD8;
+    --border: #E8E3DC;
+    --shadow: rgba(26, 24, 20, 0.06);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* LAYOUT */
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .logo-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+
+  .logo-asterisk {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--accent);
+    position: relative;
+    top: -8px;
+  }
+
+  .header-note {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+  }
+  .screen.active {
+    display: flex;
+  }
+
+  /* WELCOME SCREEN */
+  #welcome {
+    align-items: center;
+    justify-content: center;
+    padding: 0 48px 80px;
+    text-align: center;
+  }
+
+  .welcome-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.5s;
+  }
+
+  .welcome-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.1;
+    color: var(--ink);
+    max-width: 680px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.7s;
+  }
+
+  .welcome-headline em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .welcome-body {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink-light);
+    max-width: 480px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.9s;
+  }
+
+  .welcome-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 18px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 1.1s;
+  }
+
+  .welcome-cta:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .welcome-cta svg {
+    transition: transform 0.3s ease;
+  }
+
+  .welcome-cta:hover svg {
+    transform: translateX(4px);
+  }
+
+  .welcome-footnote {
+    margin-top: 56px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    max-width: 360px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 1.3s;
+  }
+
+  .welcome-footnote span {
+    color: var(--accent);
+  }
+
+  /* INPUT SCREEN */
+  #input-screen {
+    padding: 0 48px 80px;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .input-intro {
+    padding: 48px 0 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.1s;
+  }
+
+  .input-intro-label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .input-intro-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .input-intro-text em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .input-sub {
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  .input-area {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.3s;
+  }
+
+  .textarea-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 24px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  textarea::placeholder {
+    color: var(--ink-faint);
+  }
+
+  textarea:focus {
+    border-color: var(--accent-light);
+    box-shadow: 0 0 0 3px var(--accent-faint);
+  }
+
+  .input-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .example-tag {
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 1px;
+    font-weight: 300;
+  }
+
+  .example-tag:hover {
+    border-color: var(--accent-light);
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
+
+  .submit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.5;
+    max-width: 320px;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* LOADING */
+  #loading-screen {
+    align-items: center;
+    justify-content: center;
+    padding: 80px 48px;
+    text-align: center;
+  }
+
+  .loading-constellation {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 40px;
+  }
+
+  .loading-star {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .loading-star:nth-child(1) { top: 50%; left: 50%; animation-delay: 0s; width: 6px; height: 6px; margin: -3px 0 0 -3px; }
+  .loading-star:nth-child(2) { top: 15%; left: 50%; animation-delay: 0.2s; margin-left: -2px; }
+  .loading-star:nth-child(3) { top: 30%; left: 80%; animation-delay: 0.4s; }
+  .loading-star:nth-child(4) { top: 65%; left: 85%; animation-delay: 0.6s; }
+  .loading-star:nth-child(5) { top: 85%; left: 60%; animation-delay: 0.8s; }
+  .loading-star:nth-child(6) { top: 80%; left: 25%; animation-delay: 1.0s; }
+  .loading-star:nth-child(7) { top: 50%; left: 10%; animation-delay: 1.2s; }
+  .loading-star:nth-child(8) { top: 20%; left: 20%; animation-delay: 1.4s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  .loading-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .loading-sub {
+    font-size: 14px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  /* RESPONSE SCREEN */
+  #response-screen {
+    padding: 0 48px 80px;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .response-header {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.1s;
+  }
+
+  .response-label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  .response-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .symptom-echo {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: var(--accent-faint);
+    border-left: 2px solid var(--accent-light);
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .response-body {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+
+  .response-opening {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+
+  .response-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ink-light);
+    margin-bottom: 24px;
+  }
+
+  .response-text p + p {
+    margin-top: 16px;
+  }
+
+  .response-directions {
+    margin: 40px 0;
+    padding: 32px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.7s;
+  }
+
+  .directions-label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-bottom: 20px;
+  }
+
+  .direction-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .direction-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .direction-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--accent-light);
+    min-width: 28px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .direction-content h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .direction-content p {
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  .response-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    gap: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 1.0s;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    max-width: 340px;
+  }
+
+  .footer-note span {
+    color: var(--accent);
+  }
+
+  .restart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .restart-btn:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--accent-light);
+    margin: 32px 0;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    header { padding: 24px; }
+    #welcome, #input-screen, #response-screen, #loading-screen { padding-left: 24px; padding-right: 24px; }
+    .submit-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .response-footer { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* Error state */
+  .error-box {
+    padding: 16px 20px;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #991B1B;
+    margin-top: 16px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <span class="logo-word">Nova</span>
+      <span class="logo-asterisk">*</span>
+    </div>
+    <span class="header-note">Rare Disease Platform</span>
+  </header>
+
+  <!-- WELCOME SCREEN -->
+  <div class="screen active" id="welcome">
+    <p class="welcome-eyebrow">You deserve an answer</p>
+    <h1 class="welcome-headline">For the first time in history, the knowledge exists.<br><em>Nova* is how it finds you.</em></h1>
+    <p class="welcome-body">Tell us what you're experiencing. In your own words. No forms. No checkboxes. Just the truth of what you're going through — and we'll begin looking for answers.</p>
+    <button class="welcome-cta" onclick="showScreen('input-screen')">
+      Begin
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <p class="welcome-footnote"><span>Nova*</span> does not replace your doctor. It helps you find the right one — and understand why. Funded by pharma. Free to patients. Built to feel like hope, not medicine.</p>
+  </div>
+
+  <!-- INPUT SCREEN -->
+  <div class="screen" id="input-screen">
+    <div class="input-intro">
+      <p class="input-intro-label">Tell us what's happening</p>
+      <h2 class="input-intro-text">Describe what you're experiencing — <em>in your own words.</em></h2>
+      <p class="input-sub">Include anything you think is relevant. How long it's been happening. What makes it better or worse. What doctors have told you. There's no wrong answer here.</p>
+    </div>
+    <div class="input-area">
+      <div class="textarea-wrapper">
+        <textarea id="symptom-input" placeholder="I've been experiencing..." rows="7"></textarea>
+      </div>
+      <div class="input-examples">
+        <span class="example-tag" onclick="appendExample('Fatigue that doesn\'t improve with rest')">Unexplained fatigue</span>
+        <span class="example-tag" onclick="appendExample('Muscle weakness and difficulty walking')">Muscle weakness</span>
+        <span class="example-tag" onclick="appendExample('Recurring unexplained pain')">Recurring pain</span>
+        <span class="example-tag" onclick="appendExample('Neurological symptoms including tremors')">Neurological symptoms</span>
+        <span class="example-tag" onclick="appendExample('Years of testing with no clear diagnosis')">No diagnosis yet</span>
+      </div>
+      <div class="submit-row">
+        <p class="submit-note">Your description is private. Nova* uses it only to search for answers that match your experience.</p>
+        <button class="submit-btn" id="submit-btn" onclick="submitSymptoms()">
+          Find my answers
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="error-box" id="error-box">Something went wrong. Please try again.</div>
+    </div>
+  </div>
+
+  <!-- LOADING SCREEN -->
+  <div class="screen" id="loading-screen">
+    <div class="loading-constellation">
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+      <div class="loading-star"></div>
+    </div>
+    <p class="loading-text">Searching across everything known.</p>
+    <p class="loading-sub">Nova* is looking through the world's rare disease knowledge<br>to find what matches your experience.</p>
+  </div>
+
+  <!-- RESPONSE SCREEN -->
+  <div class="screen" id="response-screen">
+    <div class="response-header">
+      <p class="response-label">What we found</p>
+      <h2 class="response-title" id="response-title">Your experience has a pattern.</h2>
+      <div class="symptom-echo" id="symptom-echo"></div>
+    </div>
+    <div class="response-body">
+      <p class="response-opening" id="response-opening"></p>
+      <div class="section-divider"></div>
+      <div class="response-text" id="response-text"></div>
+    </div>
+    <div class="response-directions">
+      <p class="directions-label">Your next steps</p>
+      <div id="directions-list"></div>
+    </div>
+    <div class="response-footer">
+      <p class="footer-note"><span>Nova*</span> does not diagnose. It illuminates. Everything here is a starting point — not a conclusion. Please share this with your doctor.</p>
+      <button class="restart-btn" onclick="restart()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7a5 5 0 1 0 1-3M2 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Start again
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => {
+      s.classList.remove('active');
+      // Reset animations by re-triggering
+      s.querySelectorAll('[style*="animation"]').forEach(el => {
+        el.style.animation = 'none';
+      });
+    });
+    const screen = document.getElementById(id);
+    screen.classList.add('active');
+    // Re-trigger animations
+    setTimeout(() => {
+      screen.querySelectorAll('[style*="opacity: 0"], .input-intro, .input-area, .response-header, .response-body, .response-directions, .response-footer, .loading-text, .loading-sub').forEach(el => {
+        el.style.animation = '';
+      });
+    }, 10);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function appendExample(text) {
+    const ta = document.getElementById('symptom-input');
+    if (ta.value && !ta.value.endsWith(' ')) ta.value += ' ';
+    ta.value += text + '. ';
+    ta.focus();
+  }
+
+  async function submitSymptoms() {
+    const symptoms = document.getElementById('symptom-input').value.trim();
+    if (!symptoms || symptoms.length < 10) return;
+
+    const errorBox = document.getElementById('error-box');
+    errorBox.style.display = 'none';
+
+    showScreen('loading-screen');
+
+    const systemPrompt = `You are Nova*, a compassionate rare disease guidance platform. Your role is to help patients who may have undiagnosed rare diseases understand their symptoms and find a path forward.
+
+When given a patient's symptom description, respond with a JSON object containing exactly these fields:
+
+{
+  "title": "A short, warm, humanizing title (not a diagnosis) — 5-8 words that acknowledge their experience",
+  "opening": "A single sentence (25-40 words) in an empathetic, intelligent tone — acknowledge that what they're describing matters and has been seen before. Written in Cormorant Garamond spirit: precise, warm, literary.",
+  "body": "Two paragraphs. First: explain what patterns in their symptoms are worth exploring, referencing rare disease categories that may be relevant — written for a non-medical person with intelligence and respect. Second: explain why rare diseases are often missed and why what they're doing matters. Total 120-160 words.",
+  "steps": [
+    {"title": "Step title", "detail": "One sentence of specific, actionable guidance"},
+    {"title": "Step title", "detail": "One sentence of specific, actionable guidance"},
+    {"title": "Step title", "detail": "One sentence of specific, actionable guidance"}
+  ]
+}
+
+Tone: Never alarming. Never dismissive. Precise and warm. The patient has likely been dismissed by doctors — make them feel seen. Do not diagnose. Do not name specific diseases unless explaining a category. Always return valid JSON only, no markdown.`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: symptoms }]
+        })
+      });
+
+      if (!response.ok) throw new Error('API error');
+
+      const data = await response.json();
+      const raw = data.content[0].text;
+      const clean = raw.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+
+      // Populate response screen
+      document.getElementById('response-title').textContent = parsed.title;
+      document.getElementById('symptom-echo').textContent = `"${symptoms.length > 120 ? symptoms.substring(0, 120) + '…' : symptoms}"`;
+      document.getElementById('response-opening').textContent = parsed.opening;
+
+      // Body paragraphs
+      const bodyDiv = document.getElementById('response-text');
+      bodyDiv.innerHTML = parsed.body.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+      // Steps
+      const stepsList = document.getElementById('directions-list');
+      stepsList.innerHTML = parsed.steps.map((step, i) => `
+        <div class="direction-item">
+          <span class="direction-number">0${i + 1}</span>
+          <div class="direction-content">
+            <h4>${step.title}</h4>
+            <p>${step.detail}</p>
+          </div>
+        </div>
+      `).join('');
+
+      showScreen('response-screen');
+
+    } catch (err) {
+      showScreen('input-screen');
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Something went wrong reaching Nova*. Please try again.';
+    }
+  }
+
+  function restart() {
+    document.getElementById('symptom-input').value = '';
+    document.getElementById('error-box').style.display = 'none';
+    showScreen('welcome');
+  }
+</script>
+</body>
+</html>
