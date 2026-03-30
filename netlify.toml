@@ -2,7 +2,7 @@
   publish = "."
   functions = "netlify/functions"
 
-[functions]
+[functions.claude]
   timeout = 26
 
 [[redirects]]
