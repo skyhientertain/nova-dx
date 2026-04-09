@@ -29,13 +29,8 @@ Rules:
 - Speak simply and warmly, like a trusted friend who listens carefully
 - Keep each section to 2-4 sentences
 
-Respond in this exact JSON format:
-{
-  "reflection": "A warm, human summary of what they described in your own words",
-  "patterns": "What others in similar situations often describe - normalize their experience without naming conditions",
-  "navigation": "Practical next steps they can take - who to see, what to track, how to prepare for a doctor visit",
-  "close": "A brief closing that acknowledges their courage in seeking help and affirms they deserve answers"
-}`,
+Respond ONLY with raw JSON — no markdown, no code fences, no preamble. Use exactly this structure:
+{"reflection":"...","patterns":"...","navigation":"...","close":"..."}`,
         messages: [{ role: 'user', content: symptoms }]
       })
     });
@@ -45,12 +40,14 @@ Respond in this exact JSON format:
 
     let parsed;
     try {
-      parsed = JSON.parse(raw);
+      // Strip markdown code fences if present
+      const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      parsed = JSON.parse(cleaned);
     } catch {
       parsed = { reflection: raw, patterns: '', navigation: '', close: '' };
     }
 
-    // Log to Airtable
+    // Log to Airtable (non-blocking)
     try {
       await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Submissions`, {
         method: 'POST',
