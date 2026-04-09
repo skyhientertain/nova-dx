@@ -21,9 +21,9 @@
     #main-screen{min-height:100vh;display:flex;flex-direction:column}
     .main-body{flex:1;display:flex;align-items:flex-start;padding-top:64px;padding-bottom:60px}
     .main-body .inner{width:100%}
-    h1{font-family:var(--serif);font-weight:300;font-size:clamp(32px,5.5vw,48px);line-height:1.15;margin-bottom:28px;color:var(--ink)}
+    h1{font-family:var(--serif);font-weight:300;font-size:clamp(22px,2.4vw,30px);line-height:1.2;margin-bottom:16px;color:var(--ink)}
     h1 em{font-style:italic}
-    textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
+    .sub-note{display:block;font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6}textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
     textarea::placeholder{color:var(--ink-soft)}textarea:focus{border-color:var(--accent)}
     .submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px}
     .submit-note{font-size:12px;color:var(--ink-soft)}
@@ -77,7 +77,7 @@
     <nav><div class="w"><span class="wordmark">Nova<b>*</b></span></div></nav>
     <div class="main-body"><div class="w"><div class="inner">
       <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
-      <textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
+      <span class="sub-note">Describe what you've been experiencing. We'll help you understand it—and figure out next steps. No diagnosis.</span><textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
       <p class="char-hint" id="charHint">&nbsp;</p>
       <p class="inline-msg warn" id="emptyState">Can you add a little more? When it started, what it feels like — anything helps.</p>
       <p class="inline-msg err" id="errorMsg">Something went wrong. Please try again in a moment.</p>
