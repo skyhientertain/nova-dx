@@ -9,116 +9,155 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#F9F7F4;--surface:#FFFFFF;--ink:#1C1A17;--ink-mid:#5C5751;--ink-soft:#9C9590;--line:#E8E4DF;--accent:#B07A3E;--accent-lt:#FBF5EC;--r:4px;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
-    body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;min-height:100vh}
-    .w{width:100%;max-width:600px;margin:0 auto;padding:0 24px}
-    nav{padding:32px 0 0}
-    .nav-inner{display:flex;align-items:center;justify-content:space-between}
-    .wordmark{font-family:var(--serif);font-weight:300;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.45;cursor:pointer}
+    :root{
+      --bg:#F9F7F4;--surface:#FFFFFF;--ink:#1C1A17;--ink-mid:#5C5751;--ink-soft:#9C9590;
+      --line:#E8E4DF;--accent:#B07A3E;--accent-lt:#FBF5EC;--accent-dk:#8A5C28;
+      --signal-bg:#FDF6EC;--signal-border:#E8D5B4;
+      --r:8px;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif
+    }
+    html,body{height:100%;overflow:hidden}
+    body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;display:flex;flex-direction:column}
+
+    /* Nav */
+    nav{flex-shrink:0;padding:18px 0;border-bottom:1px solid var(--line);background:var(--bg)}
+    .nav-inner{max-width:720px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+    .wordmark{font-family:var(--serif);font-weight:300;font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.5;cursor:pointer;text-decoration:none}
     .wordmark b{color:var(--accent);font-weight:300;opacity:1}
-    .journal-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 14px;font-family:var(--sans);font-size:12px;color:var(--ink-soft);cursor:pointer;transition:all .2s;display:none;align-items:center;gap:6px}
+    .journal-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-family:var(--sans);font-size:11px;color:var(--ink-soft);cursor:pointer;transition:all .2s;display:none;align-items:center;gap:5px}
     .journal-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
     .journal-btn.show{display:flex}
-    .j-count{background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:500}
-    .welcome-back{background:var(--accent-lt);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;margin-top:20px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .j-count{background:var(--accent);color:#fff;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:500}
+
+    /* Thread — scrollable middle */
+    .thread{flex:1;overflow-y:auto;padding:0 0 16px}
+    .thread-inner{max-width:720px;margin:0 auto;padding:0 24px}
+
+    /* Welcome state */
+    .welcome{padding:52px 0 32px}
+    .welcome h1{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,36px);line-height:1.2;margin-bottom:14px;color:var(--ink)}
+    .welcome h1 em{font-style:italic}
+    .welcome p{font-size:14px;color:var(--ink-mid);line-height:1.65;margin-bottom:28px;max-width:520px}
+    .welcome-back{background:var(--accent-lt);border:1px solid var(--signal-border);border-radius:var(--r);padding:12px 16px;margin-bottom:24px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
     .welcome-back.show{display:flex}
-    .welcome-text{font-size:13px;color:var(--ink-mid)}
-    .welcome-text strong{color:var(--ink);font-weight:400}
-    .welcome-link{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;white-space:nowrap}
-    .input-area{padding-top:52px;padding-bottom:32px}
-    h1{font-family:var(--serif);font-weight:300;font-size:clamp(22px,2.4vw,30px);line-height:1.2;margin-bottom:16px;color:var(--ink)}
-    h1 em{font-style:italic}
-    .sub-note{display:block;font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6}
-    .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
-    .starters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-    .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .wb-text{font-size:13px;color:var(--ink-mid)}
+    .wb-link{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;white-space:nowrap}
+    .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:block}
+    .starters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:0}
+    .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
     .starter:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
-    textarea{width:100%;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
-    textarea::placeholder{color:var(--ink-soft)}textarea:focus{border-color:var(--accent)}
-    #symptomInput{min-height:160px}
-    .char-hint{font-size:12px;color:var(--ink-soft);text-align:right;margin-top:6px;height:14px;transition:color .3s}
-    .char-hint.good{color:var(--accent)}
-    .inline-msg{font-size:13px;font-style:italic;margin-top:8px;display:none}.inline-msg.active{display:block}.inline-msg.warn{color:#A0522D}.inline-msg.err{color:#B91C1C}
-    .submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px}
-    .submit-note{font-size:12px;color:var(--ink-soft)}
-    .btn{display:inline-block;background:var(--ink);color:var(--bg);border:none;padding:14px 32px;font-family:var(--sans);font-size:15px;font-weight:400;letter-spacing:.03em;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .1s}
-    .btn:hover{background:#333}.btn:active{transform:scale(.98)}.btn:disabled{background:var(--ink-soft);cursor:not-allowed}
-    .loading-inline{display:none;padding:40px 0;text-align:center}
-    .loading-inline.active{display:block}
-    .loading-dots{display:inline-flex;gap:7px;margin-bottom:14px}
-    .loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.3s ease-in-out infinite}
+
+    /* Chat messages */
+    .msg{margin-top:24px;animation:fadeUp .35s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    /* User message */
+    .msg-user{display:flex;justify-content:flex-end}
+    .msg-user .bubble{background:var(--ink);color:#F9F7F4;border-radius:18px 18px 4px 18px;padding:14px 18px;font-size:15px;line-height:1.6;max-width:85%;font-weight:300}
+
+    /* Nova response */
+    .msg-nova{}
+    .nova-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+    .nova-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
+    .nova-body{font-size:16px;color:var(--ink-mid);line-height:1.75}
+    .nova-body p{margin-bottom:14px}.nova-body p:last-child{margin-bottom:0}
+
+    /* Signal card — the network moment */
+    .signal-card{background:var(--signal-bg);border:1px solid var(--signal-border);border-left:3px solid var(--accent);border-radius:var(--r);padding:20px 20px 18px;margin:20px 0}
+    .signal-header{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dk);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .signal-header::before{content:'✶';font-size:13px;color:var(--accent)}
+    .signal-intro{font-size:14px;color:var(--ink-mid);margin-bottom:12px;line-height:1.6}
+    .signal-quotes{display:flex;flex-direction:column;gap:8px}
+    .signal-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink);line-height:1.5;padding-left:14px;border-left:2px solid var(--accent-lt)}
+
+    /* Navigation section */
+    .nav-section{margin-top:20px}
+    .nav-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:block}
+    .nav-body{font-size:15px;color:var(--ink-mid);line-height:1.7}
+    .nav-body p{margin-bottom:12px}.nav-body p:last-child{margin-bottom:0}
+
+    /* Close line */
+    .close-line{font-family:var(--serif);font-size:clamp(18px,2.5vw,22px);font-weight:300;line-height:1.5;color:var(--ink);margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+    .signal-note{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:10px}
+
+    /* Follow-up user message in thread */
+    .followup-user{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+
+    /* Loading */
+    .loading-msg{margin-top:24px}
+    .loading-inner{display:flex;align-items:center;gap:10px}
+    .loading-dots{display:flex;gap:5px}
+    .loading-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.3s ease-in-out infinite}
     .loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
     @keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-    .loading-label{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink-mid)}
-    .response-divider{border:none;border-top:1px solid var(--line);margin:0;display:none}
-    .conv-thread{display:none}
-    .exchange{animation:fadeUp .4s ease}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    .xdivider{border:none;border-top:1px solid var(--line);margin:0}
-    .user-msg{padding:24px 0 0}
-    .user-msg-label{font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:10px}
-    .user-msg-text{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink-mid);line-height:1.6;border-left:2px solid var(--line);padding-left:16px}
-    .out-block{padding:28px 0;border-bottom:1px solid var(--line)}
-    .out-label{font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}
-    .out-body{font-size:16px;color:var(--ink-mid);line-height:1.75}
-    .out-body p{margin-bottom:12px}.out-body p:last-child{margin-bottom:0}.out-body ul{list-style:none}
-    .out-body li{padding:8px 0 8px 18px;border-bottom:1px solid var(--line);position:relative;font-size:15px}
-    .out-body li:last-child{border-bottom:none}
-    .out-body li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.5}
-    .out-close{padding:28px 0;border-bottom:1px solid var(--line)}
-    .out-close p{font-family:var(--serif);font-size:clamp(18px,2.5vw,22px);font-weight:300;line-height:1.5;color:var(--ink);margin-bottom:8px}
-    .signal-note{margin-top:20px;font-size:13px;color:var(--ink-soft);font-style:italic}
-    .feedback{padding:28px 0;border-top:1px solid var(--line)}
-    .feedback-q{font-size:15px;color:var(--ink);margin-bottom:12px}
+    .loading-text{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-soft)}
+
+    /* Feedback */
+    .feedback{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+    .feedback-q{font-size:14px;color:var(--ink);margin-bottom:10px}
     .feedback-opts{display:flex;gap:8px;flex-wrap:wrap}
-    .fb-btn{background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:8px 18px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .fb-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 16px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .fb-btn:hover,.fb-btn.selected{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
     .fb-followup{display:none;margin-top:12px}.fb-followup.active{display:block}
     .fb-followup label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
-    .fb-followup textarea{min-height:60px;font-size:14px}
-    .fb-send{margin-top:8px;background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:7px 18px;font-family:var(--sans);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .fb-followup textarea{width:100%;min-height:60px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:14px;color:var(--ink);resize:none;outline:none}
+    .fb-followup textarea:focus{border-color:var(--accent)}
+    .fb-send{margin-top:8px;background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 16px;font-family:var(--sans);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .fb-send:hover{border-color:var(--ink);color:var(--ink)}
     .fb-thanks{display:none;font-size:12px;color:var(--accent);margin-top:8px;font-style:italic}
-    .followup-area{display:none;padding:28px 0 0;border-top:1px solid var(--line);margin-top:4px}
-    .followup-area.active{display:block}
-    .followup-label{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
-    #followUpInput{min-height:80px;font-size:15px}
-    .followup-actions{display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:10px}
-    .btn-sm{background:var(--ink);color:var(--bg);border:none;padding:10px 24px;font-family:var(--sans);font-size:14px;font-weight:400;border-radius:var(--r);cursor:pointer;transition:background .2s}
-    .btn-sm:hover{background:#333}.btn-sm:disabled{background:var(--ink-soft);cursor:not-allowed}
-    .new-entry-link{font-size:13px;color:var(--ink-soft);cursor:pointer;text-decoration:underline}
-    .new-entry-link:hover{color:var(--ink)}
-    .journal-overlay{display:none;position:fixed;inset:0;background:rgba(249,247,244,.97);z-index:200;overflow-y:auto}
+
+    /* Input bar — pinned to bottom like Claude */
+    .input-bar{flex-shrink:0;background:var(--bg);border-top:1px solid var(--line);padding:14px 0 18px}
+    .input-bar-inner{max-width:720px;margin:0 auto;padding:0 24px}
+    .input-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;transition:border-color .2s;overflow:hidden}
+    .input-wrap:focus-within{border-color:var(--accent)}
+    #mainInput{width:100%;padding:14px 16px 10px;background:transparent;border:none;font-family:var(--sans);font-size:15px;font-weight:300;color:var(--ink);resize:none;outline:none;line-height:1.6;max-height:160px;min-height:52px;overflow-y:auto;display:block}
+    #mainInput::placeholder{color:var(--ink-soft)}
+    .input-footer{display:flex;align-items:center;justify-content:space-between;padding:0 14px 10px}
+    .input-hint{font-size:11px;color:var(--ink-soft);transition:color .2s}
+    .input-hint.good{color:var(--accent)}
+    .send-btn{background:var(--ink);color:var(--bg);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
+    .send-btn:hover{background:#333}
+    .send-btn:disabled{background:var(--line);cursor:not-allowed}
+    .send-btn svg{width:14px;height:14px;fill:currentColor}
+    .input-inline-err{font-size:12px;color:#B91C1C;font-style:italic;padding:0 0 6px 2px;display:none}
+    .input-inline-err.show{display:block}
+
+    /* Journal overlay */
+    .journal-overlay{display:none;position:fixed;inset:0;background:rgba(249,247,244,.97);z-index:300;overflow-y:auto}
     .journal-overlay.open{display:block}
     .journal-panel{max-width:600px;margin:0 auto;padding:40px 24px 80px}
     .journal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
     .journal-title{font-family:var(--serif);font-weight:300;font-size:28px;color:var(--ink)}
-    .journal-close{background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:8px 18px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .journal-close{background:transparent;border:1px solid var(--line);border-radius:20px;padding:7px 16px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .journal-close:hover{border-color:var(--ink);color:var(--ink)}
     .journal-empty{font-size:15px;color:var(--ink-soft);font-style:italic;text-align:center;padding:60px 0}
-    .jentry{border-bottom:1px solid var(--line);padding:24px 0;cursor:pointer}
+    .jentry{border-bottom:1px solid var(--line);padding:22px 0;cursor:pointer}
     .jentry:last-child{border-bottom:none}
-    .jentry-date{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:block}
-    .jentry-preview{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink-mid);line-height:1.5;margin-bottom:6px}
+    .jentry-date{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;display:block}
+    .jentry-preview{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink-mid);line-height:1.5;margin-bottom:5px}
     .jentry-meta{font-size:12px;color:var(--ink-soft)}
     .jentry:hover .jentry-preview{color:var(--ink)}
-    .jentry-full{display:none;margin-top:20px;border-top:1px solid var(--line);padding-top:20px}
+    .jentry-full{display:none;margin-top:18px;border-top:1px solid var(--line);padding-top:18px}
     .jentry-full.open{display:block}
-    .j-user-text{font-size:14px;color:var(--ink-mid);line-height:1.7;border-left:2px solid var(--line);padding-left:14px;margin-bottom:14px;font-style:italic}
+    .j-user-text{font-size:14px;color:var(--ink-mid);line-height:1.7;border-left:2px solid var(--line);padding-left:12px;margin-bottom:12px;font-style:italic}
     .j-nova-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:block}
     .j-nova-text{font-size:14px;color:var(--ink-mid);line-height:1.7}
     .j-nova-text p{margin-bottom:8px}.j-nova-text p:last-child{margin-bottom:0}
-    .j-collapse{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;margin-top:12px;display:block}
+    .j-collapse{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;margin-top:10px;display:block}
     .j-collapse:hover{color:var(--ink)}
-    footer{padding:36px 0;border-top:1px solid var(--line);margin-top:40px}
-    .footer-inner{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end}
-    .footer-left p{font-size:12px;color:var(--ink-soft);line-height:1.6;max-width:380px}
-    .footer-right{font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap}
-    .footer-right a{color:var(--ink-soft);text-decoration:none}.footer-right a:hover{color:var(--ink)}
-    @media(max-width:480px){.submit-row,.followup-actions{flex-direction:column;align-items:stretch}.btn,.btn-sm{text-align:center;width:100%;display:block}.footer-inner{flex-direction:column}.footer-right{text-align:left}.starters{gap:6px}.nav-inner{flex-wrap:wrap;gap:8px}}
+
+    /* Footer (minimal, inside thread) */
+    .thread-footer{padding:20px 0 8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;margin-top:32px}
+    .thread-footer p{font-size:11px;color:var(--ink-soft)}
+    .thread-footer a{color:var(--ink-soft);text-decoration:none}.thread-footer a:hover{color:var(--ink)}
+    .new-entry{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline}.new-entry:hover{color:var(--ink)}
+
+    @media(max-width:480px){.starters{gap:5px}.msg-user .bubble{max-width:95%}}
   </style>
 </head>
 <body>
+
+  <!-- Journal overlay -->
   <div class="journal-overlay" id="journalOverlay">
     <div class="journal-panel">
       <div class="journal-header">
@@ -128,83 +167,87 @@
       <div id="journalEntries"></div>
     </div>
   </div>
-  <nav><div class="w"><div class="nav-inner">
-    <span class="wordmark" onclick="resetAll()">Nova<b>*</b></span>
-    <button class="journal-btn" id="journalBtn" onclick="openJournal()">Journal <span class="j-count" id="jCount">0</span></button>
-  </div></div></nav>
-  <div class="w">
-    <div class="welcome-back" id="welcomeBack">
-      <span class="welcome-text"><strong id="lastEntryTxt"></strong></span>
-      <span class="welcome-link" onclick="openJournal()">View your journal &rarr;</span>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <span class="wordmark" onclick="newEntry()">Nova<b>*</b></span>
+      <button class="journal-btn" id="journalBtn" onclick="openJournal()">
+        Journal <span class="j-count" id="jCount">0</span>
+      </button>
     </div>
-    <div class="input-area" id="inputArea">
-      <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
-      <span class="sub-note">Tell us what you’ve been going through — symptoms, patterns, how long it’s been, what doctors have said. Whatever feels relevant. We’ll help you make sense of it and figure out your next step.</span>
-      <span class="starters-label" id="startersLabel">Start with one of these, or write your own</span>
-      <div class="starters" id="starters">
-        <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
-        <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
-        <button class="starter" onclick="addStarter('My doctors say everything is normal, but ')">My doctors say it’s normal, but…</button>
-        <button class="starter" onclick="addStarter('The strangest symptom is ')">The strangest symptom is…</button>
-        <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
-        <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
+  </nav>
+
+  <!-- Thread -->
+  <div class="thread" id="thread">
+    <div class="thread-inner" id="threadInner">
+
+      <!-- Welcome state -->
+      <div id="welcomeState" class="welcome">
+        <div class="welcome-back" id="welcomeBack">
+          <span class="wb-text" id="wbText"></span>
+          <span class="wb-link" onclick="openJournal()">View your journal &rarr;</span>
+        </div>
+        <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
+        <p>Tell us what you’ve been going through — symptoms, patterns, how long it’s been, what doctors have said. We’ll help you make sense of it and figure out your next step.</p>
+        <span class="starters-label">Start with one of these</span>
+        <div class="starters">
+          <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
+          <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
+          <button class="starter" onclick="addStarter('My doctors say it’s normal, but ')">My doctors say it’s normal, but…</button>
+          <button class="starter" onclick="addStarter('The strangest symptom is ')">The strangest symptom is…</button>
+          <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
+          <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
+        </div>
       </div>
-      <textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
-      <p class="char-hint" id="charHint">&nbsp;</p>
-      <p class="inline-msg warn" id="emptyState">Can you add a little more? When it started, what it feels like — anything helps.</p>
-      <p class="inline-msg err" id="errorMsg">Something went wrong. Please try again in a moment.</p>
-      <div class="submit-row" id="submitRow">
-        <span class="submit-note">Everything you share stays private.</span>
-        <button class="btn" id="submitBtn" onclick="submitSymptoms()">Continue</button>
+
+      <!-- Messages append here -->
+      <div id="messages"></div>
+
+      <!-- Footer inside thread -->
+      <div class="thread-footer" id="threadFooter" style="display:none">
+        <p>Nova’s not a doctor. It’s a place to find the words. &nbsp;·&nbsp; <a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></p>
+        <span class="new-entry" onclick="newEntry()">Start a new entry</span>
       </div>
+
     </div>
-    <div class="loading-inline" id="loadingInline">
-      <div class="loading-dots"><span></span><span></span><span></span></div>
-      <p class="loading-label">Reading what you shared…</p>
-    </div>
-    <hr class="response-divider" id="responseDivider">
-    <div class="conv-thread" id="convThread"></div>
-    <div class="feedback" id="feedbackArea" style="display:none">
-      <p class="feedback-q">Did this help you find the words?</p>
-      <div class="feedback-opts">
-        <button class="fb-btn" onclick="selectFb(this)">Yes</button>
-        <button class="fb-btn" onclick="selectFb(this)">Somewhat</button>
-        <button class="fb-btn" onclick="selectFb(this)">No</button>
-      </div>
-      <div class="fb-followup" id="fbFollowup">
-        <label>What did we miss?</label>
-        <textarea id="fbText" placeholder="(Optional)"></textarea>
-        <button class="fb-send" onclick="sendFeedback()">Send</button>
-        <p class="fb-thanks" id="fbThanks">Thank you. This genuinely helps.</p>
-      </div>
-    </div>
-    <div class="followup-area" id="followUpArea">
-      <span class="followup-label">Continue the conversation</span>
-      <textarea id="followUpInput" placeholder="Ask a follow-up, add more context, or describe something new…" aria-label="Follow-up"></textarea>
-      <div class="followup-actions">
-        <span class="new-entry-link" onclick="resetAll()">Start a new entry</span>
-        <button class="btn-sm" id="followUpBtn" onclick="sendFollowUp()">Send</button>
+  </div>
+
+  <!-- Input bar — pinned to bottom -->
+  <div class="input-bar">
+    <div class="input-bar-inner">
+      <p class="input-inline-err" id="inputErr">Can you add a little more? When it started, what it feels like — anything helps.</p>
+      <div class="input-wrap">
+        <textarea id="mainInput" rows="1" placeholder="Describe what you’ve been going through…" aria-label="Your message" oninput="onInput(this)"></textarea>
+        <div class="input-footer">
+          <span class="input-hint" id="inputHint">Everything you share stays private.</span>
+          <button class="send-btn" id="sendBtn" onclick="handleSend()" aria-label="Send">
+            <svg viewBox="0 0 16 16"><path d="M1 8l13-6-5 6 5 6z"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <footer><div class="w"><div class="footer-inner">
-    <div class="footer-left"><p>Nova’s not a doctor. It’s a place to find the words.</p></div>
-    <div class="footer-right">Nova* — Early Access<br><a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></div>
-  </div></div></footer>
+
   <script>
-    const JKEY='nova_journal';
-    let hist=[],sessId=null,xCount=0;
-    (function init(){
-      const j=getJ();
+    const JKEY = 'nova_journal';
+    let hist = [], sessId = null, xCount = 0, hasResponse = false;
+
+    // Init
+    (function(){
+      const j = getJ();
       if(j.length){
-        const last=j[0],d=new Date(last.date),today=new Date();
-        const isToday=d.toDateString()===today.toDateString();
-        document.getElementById('lastEntryTxt').textContent=isToday?'You were here earlier today.':'Last entry: '+d.toLocaleDateString('en-US',{month:'long',day:'numeric'})+'.';
+        const d = new Date(j[0].date), today = new Date();
+        const isToday = d.toDateString() === today.toDateString();
+        document.getElementById('wbText').textContent = isToday ? 'You were here earlier today.' : 'Last entry: ' + d.toLocaleDateString('en-US',{month:'long',day:'numeric'}) + '.';
         document.getElementById('welcomeBack').classList.add('show');
       }
       updateJNav();
+      autoResize(document.getElementById('mainInput'));
     })();
-    function getJ(){try{return JSON.parse(localStorage.getItem(JKEY)||'[]');}catch{return [];}}
+
+    // Journal
+    function getJ(){try{return JSON.parse(localStorage.getItem(JKEY)||'[]');}catch{return[];}}
     function saveJ(j){localStorage.setItem(JKEY,JSON.stringify(j.slice(0,60)));}
     function saveSession(){
       if(!hist.length||!sessId)return;
@@ -215,90 +258,227 @@
     }
     function updateJNav(){const j=getJ(),btn=document.getElementById('journalBtn');document.getElementById('jCount').textContent=j.length;if(j.length)btn.classList.add('show');else btn.classList.remove('show');}
     function genId(){return'n'+Date.now()+'_'+Math.random().toString(36).slice(2,6);}
-    function addStarter(text){const el=document.getElementById('symptomInput');el.value=el.value?el.value.trimEnd()+'\n'+text:text;el.focus();el.setSelectionRange(el.value.length,el.value.length);el.dispatchEvent(new Event('input'));}
-    const inputEl=document.getElementById('symptomInput'),hintEl=document.getElementById('charHint'),emptyEl=document.getElementById('emptyState');
-    inputEl.addEventListener('input',()=>{emptyEl.classList.remove('active');const len=inputEl.value.trim().length;hintEl.classList.remove('good');if(len===0)hintEl.textContent='\u00a0';else if(len<80)hintEl.textContent='Keep going \u2014 more detail helps.';else if(len<250)hintEl.textContent='Good. A little more context helps.';else{hintEl.textContent='This is really helpful.';hintEl.classList.add('good');}});
-    async function submitSymptoms(){
-      const text=inputEl.value.trim(),btn=document.getElementById('submitBtn'),errEl=document.getElementById('errorMsg');
-      errEl.classList.remove('active');
-      if(!text||text.length<30){emptyEl.classList.add('active');inputEl.focus();return;}
-      btn.disabled=true;lockInput();
-      document.getElementById('loadingInline').classList.add('active');
-      sessId=genId();hist=[{role:'user',content:text}];
-      const data=await callNova(hist);
-      document.getElementById('loadingInline').classList.remove('active');
-      if(!data){unlockInput();btn.disabled=false;errEl.classList.add('active');return;}
-      hist.push({role:'assistant',content:JSON.stringify(data)});
-      document.getElementById('responseDivider').style.display='block';
-      const t=document.getElementById('convThread');t.style.display='block';t.innerHTML='';
-      appendExchange(null,data);xCount=1;
-      document.getElementById('feedbackArea').style.display='block';
-      document.getElementById('followUpArea').classList.add('active');
-      setTimeout(()=>document.getElementById('responseDivider').scrollIntoView({behavior:'smooth',block:'start'}),100);
-      saveSession();
+
+    // Starters
+    function addStarter(text){
+      const el=document.getElementById('mainInput');
+      el.value=el.value?el.value.trimEnd()+'\n'+text:text;
+      el.focus();el.setSelectionRange(el.value.length,el.value.length);
+      onInput(el);
     }
-    async function sendFollowUp(){
-      const input=document.getElementById('followUpInput'),text=input.value.trim(),btn=document.getElementById('followUpBtn');
-      if(!text)return;
-      btn.disabled=true;input.value='';
-      document.getElementById('followUpArea').classList.remove('active');
-      document.getElementById('feedbackArea').style.display='none';
+
+    // Input handling
+    function onInput(el){
+      autoResize(el);
+      const len=el.value.trim().length;
+      const hint=document.getElementById('inputHint');
+      hint.classList.remove('good');
+      document.getElementById('inputErr').classList.remove('show');
+      if(len===0)hint.textContent='Everything you share stays private.';
+      else if(len<80)hint.textContent='Keep going — more detail helps.';
+      else if(len<250)hint.textContent='Good. A little more context helps.';
+      else{hint.textContent='This is really helpful.';hint.classList.add('good');}
+    }
+
+    function autoResize(el){
+      el.style.height='auto';
+      el.style.height=Math.min(el.scrollHeight,160)+'px';
+    }
+
+    // Send
+    async function handleSend(){
+      const el=document.getElementById('mainInput');
+      const text=el.value.trim();
+      const errEl=document.getElementById('inputErr');
+      if(!text||text.length<30){errEl.classList.add('show');el.focus();return;}
+
+      const isFirst=!hasResponse;
+      const btn=document.getElementById('sendBtn');
+      btn.disabled=true;
+      el.value='';el.style.height='auto';
+      document.getElementById('inputHint').textContent='Everything you share stays private.';
+      document.getElementById('inputHint').classList.remove('good');
+
+      if(isFirst){
+        // Hide welcome
+        document.getElementById('welcomeState').style.display='none';
+        sessId=genId();hist=[];xCount=0;
+      }
+
       hist.push({role:'user',content:text});
-      document.getElementById('loadingInline').classList.add('active');
-      document.getElementById('loadingInline').scrollIntoView({behavior:'smooth',block:'center'});
+
+      // Show user message
+      addUserMsg(text,isFirst);
+
+      // Show loading
+      const loadId='load'+Date.now();
+      addLoading(loadId);
+
+      // Scroll
+      scrollThread();
+
       const data=await callNova(hist);
-      document.getElementById('loadingInline').classList.remove('active');btn.disabled=false;
-      if(!data){hist.pop();input.value=text;document.getElementById('followUpArea').classList.add('active');document.getElementById('feedbackArea').style.display='block';return;}
+
+      // Remove loading
+      const loadEl=document.getElementById(loadId);
+      if(loadEl)loadEl.remove();
+
+      if(!data){
+        hist.pop();
+        btn.disabled=false;
+        addErrorMsg();
+        return;
+      }
+
       hist.push({role:'assistant',content:JSON.stringify(data)});
-      appendExchange(text,data);xCount++;
-      document.getElementById('feedbackArea').style.display='block';
-      document.getElementById('followUpArea').classList.add('active');
-      const xs=document.querySelectorAll('.exchange');const last=xs[xs.length-1];
-      if(last)setTimeout(()=>last.scrollIntoView({behavior:'smooth',block:'start'}),100);
+      addNovaResponse(data,isFirst);
+      hasResponse=true;xCount++;
+
+      document.getElementById('threadFooter').style.display='flex';
+
+      btn.disabled=false;
+      scrollThread(true);
       saveSession();
     }
+
     async function callNova(messages){
-      try{const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages})});if(!res.ok)throw new Error();return await res.json();}catch{return null;}
+      try{
+        const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages})});
+        if(!res.ok)throw new Error();
+        return await res.json();
+      }catch{return null;}
     }
-    function appendExchange(userText,data){
-      const t=document.getElementById('convThread'),div=document.createElement('div');div.className='exchange';
-      let h='';
-      if(userText)h+=`<hr class="xdivider"><div class="user-msg"><span class="user-msg-label">You added</span><p class="user-msg-text">${esc(userText)}</p></div>`;
-      if(data.reflection)h+=`<div class="out-block"><span class="out-label">You described</span><div class="out-body">${toP(data.reflection)}</div></div>`;
-      if(data.patterns)h+=`<div class="out-block"><span class="out-label">Others in the same situation often describe</span><div class="out-body">${toP(data.patterns)}</div></div>`;
-      if(data.navigation)h+=`<div class="out-block"><span class="out-label">Some people find it helpful to</span><div class="out-body">${toP(data.navigation)}</div></div>`;
-      if(data.close){h+=`<div class="out-close"><p>${esc(data.close)}</p>`;if(xCount===0)h+=`<p class="signal-note">The more people share, the more we learn. What you just shared helps.</p>`;h+=`</div>`;}
-      div.innerHTML=h;t.appendChild(div);
+
+    function addUserMsg(text, isFirst){
+      const msgs=document.getElementById('messages');
+      const div=document.createElement('div');
+      div.className='msg';
+      if(!isFirst){
+        // Follow-up — show divider
+        div.innerHTML=`<div class="followup-user"><div class="msg-user"><div class="bubble">${esc(text)}</div></div></div>`;
+      } else {
+        div.innerHTML=`<div class="msg-user"><div class="bubble">${esc(text)}</div></div>`;
+      }
+      msgs.appendChild(div);
     }
-    function toP(text){if(!text)return'';const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);if(lines.length>1&&lines.every(l=>/^[-\u2022]/.test(l)))return'<ul>'+lines.map(l=>`<li>${esc(l.replace(/^[-\u2022]\s*/,''))}</li>`).join('')+'</ul>';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');}
+
+    function addLoading(id){
+      const msgs=document.getElementById('messages');
+      const div=document.createElement('div');
+      div.className='msg loading-msg';div.id=id;
+      div.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Reading what you shared…</span></div>`;
+      msgs.appendChild(div);
+    }
+
+    function addErrorMsg(){
+      const msgs=document.getElementById('messages');
+      const div=document.createElement('div');div.className='msg';
+      div.innerHTML=`<div class="msg-nova"><span style="font-size:13px;color:#B91C1C;font-style:italic">Something went wrong. Please try again.</span></div>`;
+      msgs.appendChild(div);
+    }
+
+    function addNovaResponse(data, isFirst){
+      const msgs=document.getElementById('messages');
+      const div=document.createElement('div');div.className='msg';
+
+      let h=`<div class="msg-nova"><div class="nova-label">Nova</div>`;
+
+      // Reflection
+      if(data.reflection){
+        h+=`<div class="nova-body">${toP(data.reflection)}</div>`;
+      }
+
+      // Signal card — the network moment
+      if(data.patterns){
+        const lines=data.patterns.split('\n').map(l=>l.trim()).filter(Boolean);
+        const intro=lines.find(l=>!/^[—-]/.test(l))||'';
+        const quotes=lines.filter(l=>/^[—-]/.test(l)).map(l=>l.replace(/^[—-]s*/,''));
+
+        if(quotes.length){
+          h+=`<div class="signal-card"><div class="signal-header">Pattern recognized</div>`;
+          if(intro)h+=`<div class="signal-intro">${esc(intro)}</div>`;
+          h+=`<div class="signal-quotes">${quotes.map(q=>`<div class="signal-quote">${esc(q)}</div>`).join('')}</div></div>`;
+        }
+      }
+
+      // Navigation
+      if(data.navigation){
+        h+=`<div class="nav-section"><span class="nav-label">A useful next step</span><div class="nav-body">${toP(data.navigation)}</div></div>`;
+      }
+
+      // Close
+      if(data.close){
+        h+=`<div class="close-line">${esc(data.close)}</div>`;
+        if(isFirst&&xCount===0)h+=`<p class="signal-note">The more people share, the more we learn. What you just shared helps.</p>`;
+      }
+
+      // Feedback (only after first response)
+      if(isFirst){
+        h+=`<div class="feedback">
+          <p class="feedback-q">Did this help you find the words?</p>
+          <div class="feedback-opts">
+            <button class="fb-btn" onclick="selFb(this)">Yes</button>
+            <button class="fb-btn" onclick="selFb(this)">Somewhat</button>
+            <button class="fb-btn" onclick="selFb(this)">No</button>
+          </div>
+          <div class="fb-followup" id="fbFollowup">
+            <label>What did we miss?</label>
+            <textarea id="fbText" placeholder="(Optional)"></textarea>
+            <button class="fb-send" onclick="sendFb()">Send</button>
+            <p class="fb-thanks" id="fbThanks">Thank you. This genuinely helps.</p>
+          </div>
+        </div>`;
+      }
+
+      h+=`</div>`;
+      div.innerHTML=h;
+      msgs.appendChild(div);
+    }
+
+    function toP(text){
+      if(!text)return'';
+      return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');
+    }
     function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-    function lockInput(){inputEl.readOnly=true;inputEl.style.cssText='color:var(--ink-mid);background:var(--bg);min-height:80px;resize:none;';document.getElementById('starters').style.display='none';document.getElementById('startersLabel').style.display='none';document.getElementById('submitRow').style.display='none';hintEl.textContent='\u00a0';}
-    function unlockInput(){inputEl.readOnly=false;inputEl.style.cssText='min-height:160px;';document.getElementById('starters').style.display='';document.getElementById('startersLabel').style.display='';document.getElementById('submitRow').style.display='';}
-    function selectFb(btn){document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('fbFollowup').classList.add('active');}
-    function sendFeedback(){document.getElementById('fbThanks').style.display='block';document.getElementById('fbText').disabled=true;document.querySelector('.fb-send').disabled=true;}
+
+    function scrollThread(smooth){
+      const t=document.getElementById('thread');
+      t.scrollTo({top:t.scrollHeight,behavior:smooth?'smooth':'instant'});
+    }
+
+    function selFb(btn){document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('fbFollowup').classList.add('active');}
+    function sendFb(){const t=document.getElementById('fbThanks');if(t)t.style.display='block';const tx=document.getElementById('fbText');if(tx)tx.disabled=true;const s=document.querySelector('.fb-send');if(s)s.disabled=true;}
+
+    // Journal
     function openJournal(){
       const j=getJ(),c=document.getElementById('journalEntries');
-      if(!j.length){c.innerHTML='<p class="journal-empty">No entries yet. Start a conversation to build your journal.</p>';}
-      else{c.innerHTML=j.map((e,i)=>{const exs=e.exchanges||Math.floor((e.history?.length||0)/2);return `<div class="jentry" onclick="toggleJEntry(${i})"><span class="jentry-date">${e.displayDate||e.date}</span><p class="jentry-preview">&ldquo;${esc(e.preview||'')}&hellip;&rdquo;</p><span class="jentry-meta">${exs} exchange${exs!==1?'s':''}</span><div class="jentry-full" id="jf${i}">${renderJ(e)}<span class="j-collapse" onclick="event.stopPropagation();toggleJEntry(${i})">Collapse &uarr;</span></div></div>`;}).join('');}
+      if(!j.length){c.innerHTML='<p class="journal-empty">No entries yet.</p>';}
+      else{c.innerHTML=j.map((e,i)=>{const exs=e.exchanges||Math.floor((e.history?.length||0)/2);return `<div class="jentry" onclick="toggleJ(${i})"><span class="jentry-date">${e.displayDate||e.date}</span><p class="jentry-preview">&ldquo;${esc(e.preview||'')}&hellip;&rdquo;</p><span class="jentry-meta">${exs} exchange${exs!==1?'s':''}</span><div class="jentry-full" id="jf${i}">${renderJ(e)}<span class="j-collapse" onclick="event.stopPropagation();toggleJ(${i})">Collapse ↑</span></div></div>`;}).join('');}
       document.getElementById('journalOverlay').classList.add('open');document.body.style.overflow='hidden';
     }
-    function renderJ(e){if(!e.history)return'';let h='';for(let i=0;i<e.history.length;i+=2){const u=e.history[i]?.content||'';let p={};try{p=JSON.parse(e.history[i+1]?.content||'{}');}catch{}h+=`<div style="margin-bottom:20px"><p class="j-user-text">${esc(u.slice(0,300))}${u.length>300?'&hellip;':''}</p>${p.reflection?`<span class="j-nova-label">Nova heard</span><div class="j-nova-text">${toP(p.reflection)}</div>`:''}</div>`;}return h;}
-    function toggleJEntry(i){const el=document.getElementById('jf'+i);if(el)el.classList.toggle('open');}
+    function renderJ(e){if(!e.history)return'';let h='';for(let i=0;i<e.history.length;i+=2){const u=e.history[i]?.content||'';let p={};try{p=JSON.parse(e.history[i+1]?.content||'{}');}catch{}h+=`<div style="margin-bottom:18px"><p class="j-user-text">${esc(u.slice(0,300))}${u.length>300?'&hellip;':''}</p>${p.reflection?`<span class="j-nova-label">Nova heard</span><div class="j-nova-text">${toP(p.reflection)}</div>`:''}</div>`;}return h;}
+    function toggleJ(i){const el=document.getElementById('jf'+i);if(el)el.classList.toggle('open');}
     function closeJournal(){document.getElementById('journalOverlay').classList.remove('open');document.body.style.overflow='';}
-    function resetAll(){
-      hist=[];sessId=null;xCount=0;inputEl.value='';unlockInput();
-      hintEl.textContent='\u00a0';hintEl.classList.remove('good');emptyEl.classList.remove('active');
-      document.getElementById('errorMsg').classList.remove('active');document.getElementById('submitBtn').disabled=false;
-      document.getElementById('loadingInline').classList.remove('active');
-      document.getElementById('responseDivider').style.display='none';
-      document.getElementById('convThread').style.display='none';document.getElementById('convThread').innerHTML='';
-      document.getElementById('feedbackArea').style.display='none';document.getElementById('followUpArea').classList.remove('active');
-      document.getElementById('followUpInput').value='';
-      document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));
-      document.getElementById('fbFollowup').classList.remove('active');document.getElementById('fbText').value='';document.getElementById('fbText').disabled=false;
-      const s=document.querySelector('.fb-send');if(s)s.disabled=false;document.getElementById('fbThanks').style.display='none';
-      window.scrollTo({top:0,behavior:'smooth'});
+
+    // New entry / reset
+    function newEntry(){
+      hist=[];sessId=null;xCount=0;hasResponse=false;
+      document.getElementById('messages').innerHTML='';
+      document.getElementById('welcomeState').style.display='';
+      document.getElementById('threadFooter').style.display='none';
+      document.getElementById('mainInput').value='';
+      document.getElementById('mainInput').style.height='auto';
+      document.getElementById('inputHint').textContent='Everything you share stays private.';
+      document.getElementById('inputHint').classList.remove('good');
+      document.getElementById('inputErr').classList.remove('show');
+      document.getElementById('sendBtn').disabled=false;
+      scrollThread();
     }
+
+    // Enter to send
+    document.getElementById('mainInput').addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}
+    });
   </script>
 </body>
 </html>
