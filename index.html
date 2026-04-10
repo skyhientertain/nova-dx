@@ -201,10 +201,8 @@
 
     const QUESTIONS=[
       {q:"Which part of your body is most affected?",opts:["Head & mind","Chest & heart","Stomach & gut","Limbs & muscles","Hard to pin down"]},
-      {q:"How long has this been going on?",opts:["A few weeks","Several months","About a year","Over a year","Years"]},
-      {q:"Does rest or sleep make it better?",opts:["Yes, it helps","Slightly","No difference","Makes it worse"]},
-      {q:"What have doctors told you?",opts:["Everything looks normal","Possible stress or anxiety","Found something minor","Haven’t been tested yet"]},
-      {q:"How much has it changed your daily life?",opts:["I push through it","I’ve had to cut back","It’s affecting work or relationships","I barely recognize myself"]}
+      {q:"How long has this been going on?",opts:["A few weeks","Several months","About a year","Over a year"]},
+      {q:"What have doctors told you so far?",opts:["Everything looks normal","Possible stress or anxiety","Found something minor","Haven’t been tested"]}
     ];
 
     (function(){
@@ -281,30 +279,41 @@
       }
     }
 
-    async function submitGuidedAnswers(){
+    function submitGuidedAnswers(){
+      // After 3 chips, show Nova prompt + unlock textarea
       const msgs=document.getElementById('messages');
-      // Build structured message from answers
-      const userMsg=guidedAnswers.map(a=>`${a.q} → ${a.a}`).join('\n');
-      hist=[{role:'user',content:userMsg}];
+      const div=document.createElement('div');div.className='msg';
+      div.innerHTML=`<div class="msg-nova"><div class="nova-label">Nova</div><div class="nova-question">Now tell us in your own words — what’s actually been happening? The specific symptoms, patterns, anything that feels hard to explain.</div></div>`;
+      msgs.appendChild(div);
+      // Reveal the write input
+      document.getElementById('inputBar').classList.remove('guided-mode');
+      document.getElementById('mainInput').placeholder='Describe what you’ve been experiencing…';
+      document.getElementById('inputHint').textContent='Everything you share stays private.';
+      document.getElementById('mainInput').focus();
+      scrollBottom();
+    }
 
+    async function finalGuidedSubmit(text){
+      // Combine chip answers + free text into one rich message
+      const chipSummary=guidedAnswers.map(a=>a.a).join(', ');
+      const fullMsg=`${text}\n\n(Additional context: ${chipSummary})`;
+      const msgs=document.getElementById('messages');
+      const userDiv=document.createElement('div');userDiv.className='msg';
+      userDiv.innerHTML=`<div class="msg-user"><div class="bubble">${esc(text)}</div></div>`;
+      msgs.appendChild(userDiv);
       const loadId='load'+Date.now();
       const loadDiv=document.createElement('div');loadDiv.className='msg loading-msg';loadDiv.id=loadId;
-      loadDiv.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Looking for your pattern…</span></div>`;
+      loadDiv.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Reading what you shared…</span></div>`;
       msgs.appendChild(loadDiv);
       scrollBottom();
-
+      hist=[{role:'user',content:fullMsg}];
       const data=await callNova(hist,'write');
       document.getElementById(loadId)?.remove();
-
       if(!data){addErrorMsg();return;}
       hist.push({role:'assistant',content:JSON.stringify(data)});
       addNovaResponse(data,true);
       hasResponse=true;xCount++;
       document.getElementById('threadFooter').style.display='flex';
-      // Show write input for follow-ups
-      document.getElementById('inputBar').classList.remove('guided-mode');
-      document.getElementById('mainInput').placeholder='Add more context or ask a follow-up…';
-      document.getElementById('inputHint').textContent='Continue the conversation…';
       saveSession();
       scrollBottom();
     }
@@ -340,6 +349,12 @@
       document.getElementById('inputHint').textContent='Everything you share stays private.';
       document.getElementById('inputHint').classList.remove('good');
       const isFirst=!hasResponse;
+      if(isFirst&&guidedAnswers.length>0){
+        // First free-text in guided mode — use combined submit
+        await finalGuidedSubmit(text);
+        document.getElementById('sendBtn').disabled=false;
+        return;
+      }
       if(isFirst){document.getElementById('welcomeState').style.display='none';sessId=sessId||genId();}
       hist.push({role:'user',content:text});
       const msgs=document.getElementById('messages');
