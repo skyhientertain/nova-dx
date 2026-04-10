@@ -74,7 +74,7 @@ No markdown, no code fences.`;
     } catch {
       parsed = mode === 'guided'
         ? { question: raw, done: false }
-        : { reflection: raw, patterns: '', navigation: '', close: '' };
+        : (() => { const m=raw.match(/\{[\s\S]*\}/); if(m){try{return JSON.parse(m[0]);}catch{}} return {reflection:raw,patterns:'',navigation:'',close:''}; })();
     }
 
     // Log to Airtable (only on analysis delivery, not mid-conversation questions)
