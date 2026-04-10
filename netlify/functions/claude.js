@@ -70,7 +70,7 @@ No markdown, no code fences.`;
       // Strip any trailing content after the closing }
       const lastBrace = cleaned.lastIndexOf('}');
       if (lastBrace >= 0) cleaned = cleaned.slice(0, lastBrace + 1);
-      parsed = JSON.parse(cleaned);
+      parsed = JSON.parse(cleaned.replace(/[\u000A\u000D]/g, ' '));
     } catch {
       parsed = mode === 'guided'
         ? { question: raw, done: false }
