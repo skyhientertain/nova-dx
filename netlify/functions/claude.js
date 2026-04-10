@@ -61,7 +61,15 @@ No markdown, no code fences.`;
 
     let parsed;
     try {
-      const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      // If response has preamble before JSON, find the first { or [
+      if (!cleaned.startsWith('{') && !cleaned.startsWith('[')) {
+        const idx = cleaned.indexOf('{');
+        if (idx >= 0) cleaned = cleaned.slice(idx);
+      }
+      // Strip any trailing content after the closing }
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (lastBrace >= 0) cleaned = cleaned.slice(0, lastBrace + 1);
       parsed = JSON.parse(cleaned);
     } catch {
       parsed = mode === 'guided'
