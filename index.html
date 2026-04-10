@@ -23,14 +23,20 @@
     .main-body .inner{width:100%}
     h1{font-family:var(--serif);font-weight:300;font-size:clamp(22px,2.4vw,30px);line-height:1.2;margin-bottom:16px;color:var(--ink)}
     h1 em{font-style:italic}
-    .sub-note{display:block;font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6}textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
+    .sub-note{display:block;font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6}
+    textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
     textarea::placeholder{color:var(--ink-soft)}textarea:focus{border-color:var(--accent)}
-    .submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px}
-    .submit-note{font-size:12px;color:var(--ink-soft)}
     .char-hint{font-size:12px;color:var(--ink-soft);text-align:right;margin-top:6px;height:14px;transition:color .3s}
     .char-hint.good{color:var(--accent)}
     .inline-msg{font-size:13px;font-style:italic;margin-top:8px;display:none}.inline-msg.active{display:block}.inline-msg.warn{color:#A0522D}.inline-msg.err{color:#B91C1C}
-    .loading-screen{display:none;padding:80px 0;text-align:center}.loading-screen.active{display:block}
+    .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
+    .starters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .starter:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+    .submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px}
+    .submit-note{font-size:12px;color:var(--ink-soft)}
+    .loading-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;align-items:center;justify-content:center}
+    .loading-overlay.active{display:flex}
     .loading-dots{display:inline-flex;gap:7px;margin-bottom:18px}
     .loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.3s ease-in-out infinite}
     .loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
@@ -69,15 +75,29 @@
     .footer-left p{font-size:12px;color:var(--ink-soft);line-height:1.6;max-width:380px}
     .footer-right{font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap}
     .footer-right a{color:var(--ink-soft);text-decoration:none}.footer-right a:hover{color:var(--ink)}
-    @media(max-width:480px){.submit-row{flex-direction:column;align-items:stretch}.btn{text-align:center;width:100%;display:block}.footer-inner{flex-direction:column}.footer-right{text-align:left}}
+    @media(max-width:480px){.submit-row{flex-direction:column;align-items:stretch}.btn{text-align:center;width:100%;display:block}.footer-inner{flex-direction:column}.footer-right{text-align:left}.starters{gap:6px}}
   </style>
 </head>
 <body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+    <p class="loading-label">Reading what you shared&hellip;</p>
+  </div>
   <div id="main-screen" class="screen active">
     <nav><div class="w"><span class="wordmark">Nova<b>*</b></span></div></nav>
     <div class="main-body"><div class="w"><div class="inner">
       <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
-      <span class="sub-note">Describe what you've been experiencing. We'll help you understand it—and figure out next steps. No diagnosis.</span><textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
+      <span class="sub-note">Describe what you’ve been experiencing. We’ll help you understand it—and figure out next steps. No diagnosis.</span>
+      <span class="starters-label">Start with one of these, or write your own</span>
+      <div class="starters">
+        <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
+        <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
+        <button class="starter" onclick="addStarter('My doctors say everything is normal, but ')">My doctors say it’s normal, but…</button>
+        <button class="starter" onclick="addStarter('The strangest symptom is ')">The strangest symptom is…</button>
+        <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
+        <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
+      </div>
+      <textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
       <p class="char-hint" id="charHint">&nbsp;</p>
       <p class="inline-msg warn" id="emptyState">Can you add a little more? When it started, what it feels like — anything helps.</p>
       <p class="inline-msg err" id="errorMsg">Something went wrong. Please try again in a moment.</p>
@@ -86,7 +106,6 @@
         <button class="btn" id="submitBtn" onclick="submitSymptoms()">Continue</button>
       </div>
     </div></div></div>
-    <div class="loading-screen" id="loadingState"><div class="loading-dots"><span></span><span></span><span></span></div><p class="loading-label">Reading what you shared&hellip;</p></div>
     <footer><div class="w"><div class="footer-inner">
       <div class="footer-left"><p>NOVA doesn’t diagnose. It helps you describe what you’re going through and prepare for your next doctor visit.</p></div>
       <div class="footer-right">Nova* &mdash; Early Access<br><a href="mailto:hello@tellnova.org">hello@tellnova.org</a></div>
@@ -102,8 +121,17 @@
       <div class="out-close"><div id="out-close"></div><p class="signal-note">The more people share, the more we learn. What you just shared helps.</p></div>
       <div class="feedback">
         <p class="feedback-q">Did this help you find the words?</p>
-        <div class="feedback-opts"><button class="fb-btn" onclick="selectFb(this)">Yes</button><button class="fb-btn" onclick="selectFb(this)">Somewhat</button><button class="fb-btn" onclick="selectFb(this)">No</button></div>
-        <div class="fb-followup" id="fbFollowup"><label>What did we miss?</label><textarea id="fbText" placeholder="(Optional)"></textarea><button class="fb-send" onclick="sendFeedback()">Send</button><p class="fb-thanks" id="fbThanks">Thank you. This genuinely helps.</p></div>
+        <div class="feedback-opts">
+          <button class="fb-btn" onclick="selectFb(this)">Yes</button>
+          <button class="fb-btn" onclick="selectFb(this)">Somewhat</button>
+          <button class="fb-btn" onclick="selectFb(this)">No</button>
+        </div>
+        <div class="fb-followup" id="fbFollowup">
+          <label>What did we miss?</label>
+          <textarea id="fbText" placeholder="(Optional)"></textarea>
+          <button class="fb-send" onclick="sendFeedback()">Send</button>
+          <p class="fb-thanks" id="fbThanks">Thank you. This genuinely helps.</p>
+        </div>
       </div>
       <div class="try-again"><button onclick="resetAll()">Start over</button></div>
     </div></main>
@@ -115,16 +143,17 @@
   <script>
     function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'})}
     function goHome(){resetAll()}
+    function addStarter(text){const el=document.getElementById('symptomInput');el.value=el.value?el.value.trimEnd()+'\n'+text:text;el.focus();el.setSelectionRange(el.value.length,el.value.length);el.dispatchEvent(new Event('input'))}
     const inputEl=document.getElementById('symptomInput'),hintEl=document.getElementById('charHint'),emptyEl=document.getElementById('emptyState');
     inputEl.addEventListener('input',()=>{emptyEl.classList.remove('active');const len=inputEl.value.trim().length;hintEl.classList.remove('good');if(len===0)hintEl.textContent='\u00a0';else if(len<80)hintEl.textContent='Keep going \u2014 more detail helps.';else if(len<250)hintEl.textContent='Good. A little more context helps.';else{hintEl.textContent='This is really helpful.';hintEl.classList.add('good')}});
-    async function submitSymptoms(){const text=inputEl.value.trim(),btn=document.getElementById('submitBtn'),errEl=document.getElementById('errorMsg'),body=document.querySelector('.main-body');errEl.classList.remove('active');if(!text||text.length<30){emptyEl.classList.add('active');inputEl.focus();return}btn.disabled=true;body.style.opacity='0.3';body.style.pointerEvents='none';document.getElementById('loadingState').classList.add('active');try{const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symptoms:text})});if(!res.ok)throw new Error();const data=await res.json();renderOutput(data);showScreen('output-screen')}catch{document.getElementById('loadingState').classList.remove('active');body.style.opacity='1';body.style.pointerEvents='';btn.disabled=false;errEl.classList.add('active')}}
+    async function submitSymptoms(){const text=inputEl.value.trim(),btn=document.getElementById('submitBtn'),errEl=document.getElementById('errorMsg'),overlay=document.getElementById('loadingOverlay');errEl.classList.remove('active');if(!text||text.length<30){emptyEl.classList.add('active');inputEl.focus();return}btn.disabled=true;overlay.classList.add('active');try{const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symptoms:text})});if(!res.ok)throw new Error();const data=await res.json();renderOutput(data);overlay.classList.remove('active');showScreen('output-screen')}catch{overlay.classList.remove('active');btn.disabled=false;errEl.classList.add('active')}}
     function renderOutput(data){if(data.reflection){set('out-reflection',toParas(data.reflection));set('out-patterns',toParas(data.patterns));set('out-nav',toParas(data.navigation));set('out-close',toClose(data.close))}else if(data.response){set('out-reflection',toParas(data.response));set('out-patterns','');set('out-nav','');set('out-close','')}}
     function set(id,html){document.getElementById(id).innerHTML=html||''}
-    function toParas(text){if(!text)return'';const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);if(lines.length>1&&lines.every(l=>/^[-\u2022]/.test(l)))return'<ul>'+lines.map(l=>`<li>${l.replace(/^[-\u2022]\s*/,'')}</li>`).join('')+'</ul>';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
-    function toClose(text){if(!text)return'';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
+    function toParas(text){if(!text)return '';const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);if(lines.length>1&&lines.every(l=>/^[-\u2022]/.test(l)))return '<ul>'+lines.map(l=>`<li>${l.replace(/^[-\u2022]\s*/,'')}</li>`).join('')+'</ul>';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
+    function toClose(text){if(!text)return '';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
     function selectFb(btn){document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('fbFollowup').classList.add('active')}
     function sendFeedback(){document.getElementById('fbThanks').style.display='block';document.getElementById('fbText').disabled=true;document.querySelector('.fb-send').disabled=true}
-    function resetAll(){inputEl.value='';hintEl.textContent='\u00a0';hintEl.classList.remove('good');emptyEl.classList.remove('active');document.getElementById('errorMsg').classList.remove('active');document.getElementById('loadingState').classList.remove('active');const body=document.querySelector('.main-body');body.style.opacity='1';body.style.pointerEvents='';document.getElementById('submitBtn').disabled=false;document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('fbFollowup').classList.remove('active');document.getElementById('fbText').value='';document.getElementById('fbText').disabled=false;const fbSend=document.querySelector('.fb-send');if(fbSend)fbSend.disabled=false;document.getElementById('fbThanks').style.display='none';['out-reflection','out-patterns','out-nav','out-close'].forEach(id=>set(id,''));showScreen('main-screen')}
+    function resetAll(){inputEl.value='';hintEl.textContent='\u00a0';hintEl.classList.remove('good');emptyEl.classList.remove('active');document.getElementById('errorMsg').classList.remove('active');document.getElementById('loadingOverlay').classList.remove('active');document.getElementById('submitBtn').disabled=false;document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('fbFollowup').classList.remove('active');document.getElementById('fbText').value='';document.getElementById('fbText').disabled=false;const fbSend=document.querySelector('.fb-send');if(fbSend)fbSend.disabled=false;document.getElementById('fbThanks').style.display='none';['out-reflection','out-patterns','out-nav','out-close'].forEach(id=>set(id,''));showScreen('main-screen')}
   </script>
 </body>
 </html>
