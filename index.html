@@ -11,50 +11,59 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--bg:#F9F7F4;--surface:#FFFFFF;--ink:#1C1A17;--ink-mid:#5C5751;--ink-soft:#9C9590;--line:#E8E4DF;--accent:#B07A3E;--accent-lt:#FBF5EC;--r:4px;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
     body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;min-height:100vh}
-    .screen{display:none}.screen.active{display:block}
     .w{width:100%;max-width:600px;margin:0 auto;padding:0 24px}
     nav{padding:36px 0 0}
-    .wordmark{font-family:var(--serif);font-weight:300;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.45}
+    .wordmark{font-family:var(--serif);font-weight:300;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.45;cursor:pointer}
     .wordmark b{color:var(--accent);font-weight:300;opacity:1}
     .btn{display:inline-block;background:var(--ink);color:var(--bg);border:none;padding:14px 32px;font-family:var(--sans);font-size:15px;font-weight:400;letter-spacing:.03em;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .1s}
     .btn:hover{background:#333}.btn:active{transform:scale(.98)}.btn:disabled{background:var(--ink-soft);cursor:not-allowed}
-    #main-screen{min-height:100vh;display:flex;flex-direction:column}
-    .main-body{flex:1;display:flex;align-items:flex-start;padding-top:64px;padding-bottom:60px}
-    .main-body .inner{width:100%}
+
+    /* Input area */
+    .input-area{padding-top:64px;padding-bottom:40px}
     h1{font-family:var(--serif);font-weight:300;font-size:clamp(22px,2.4vw,30px);line-height:1.2;margin-bottom:16px;color:var(--ink)}
     h1 em{font-style:italic}
     .sub-note{display:block;font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6}
-    textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;display:block}
-    textarea::placeholder{color:var(--ink-soft)}textarea:focus{border-color:var(--accent)}
+    .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
+    .starters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;transition:opacity .3s}
+    .starters.hidden{opacity:0;pointer-events:none;height:0;overflow:hidden;margin:0}
+    .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .starter:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+    textarea{width:100%;min-height:160px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:16px;font-weight:300;color:var(--ink);line-height:1.7;resize:vertical;outline:none;transition:border-color .2s,min-height .3s;display:block}
+    textarea::placeholder{color:var(--ink-soft)}
+    textarea:focus{border-color:var(--accent)}
+    textarea.submitted{min-height:80px;resize:none;color:var(--ink-mid);border-color:var(--line);background:var(--bg)}
     .char-hint{font-size:12px;color:var(--ink-soft);text-align:right;margin-top:6px;height:14px;transition:color .3s}
     .char-hint.good{color:var(--accent)}
     .inline-msg{font-size:13px;font-style:italic;margin-top:8px;display:none}.inline-msg.active{display:block}.inline-msg.warn{color:#A0522D}.inline-msg.err{color:#B91C1C}
-    .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
-    .starters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-    .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
-    .starter:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
     .submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px}
     .submit-note{font-size:12px;color:var(--ink-soft)}
-    .loading-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;align-items:center;justify-content:center}
-    .loading-overlay.active{display:flex}
-    .loading-dots{display:inline-flex;gap:7px;margin-bottom:18px}
+
+    /* Divider between input and output */
+    .response-divider{border:none;border-top:1px solid var(--line);margin:0}
+
+    /* Loading inline */
+    .loading-inline{display:none;padding:40px 0;text-align:center}
+    .loading-inline.active{display:block}
+    .loading-dots{display:inline-flex;gap:7px;margin-bottom:12px}
     .loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.3s ease-in-out infinite}
     .loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
     @keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-    .loading-label{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ink-mid)}
-    #output-screen{padding-bottom:80px;animation:fadeUp .5s ease}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .output-intro{padding:52px 0 36px;border-bottom:1px solid var(--line)}
-    .output-intro h2{font-family:var(--serif);font-weight:300;font-size:clamp(24px,4vw,34px);line-height:1.2}
+    .loading-label{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink-mid)}
+
+    /* Response */
+    .response-area{display:none;animation:fadeUp .5s ease}
+    .response-area.active{display:block}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
     .out-block{padding:32px 0;border-bottom:1px solid var(--line)}
     .out-label{font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:14px}
     .out-body{font-size:16px;color:var(--ink-mid);line-height:1.75}
-    .out-body p{margin-bottom:14px}.out-body p:last-child{margin-bottom:0}.out-body ul{list-style:none}
+    .out-body p{margin-bottom:14px}.out-body p:last-child{margin-bottom:0}
+    .out-body ul{list-style:none}
     .out-body li{padding:8px 0 8px 18px;border-bottom:1px solid var(--line);position:relative;font-size:15px}
     .out-body li:last-child{border-bottom:none}
     .out-body li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.5}
     .out-close{padding:32px 0;border-bottom:1px solid var(--line)}
-    .out-close p{font-family:var(--serif);font-size:clamp(19px,3vw,25px);font-weight:300;line-height:1.45;color:var(--ink);margin-bottom:10px}
+    .out-close p{font-family:var(--serif);font-size:clamp(19px,3vw,24px);font-weight:300;line-height:1.45;color:var(--ink);margin-bottom:10px}
     .signal-note{margin-top:24px;font-size:13px;color:var(--ink-soft);font-style:italic}
     .feedback{padding:32px 0;border-bottom:1px solid var(--line)}
     .feedback-q{font-size:16px;color:var(--ink);margin-bottom:14px}
@@ -67,10 +76,10 @@
     .fb-send{margin-top:8px;background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:8px 20px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .fb-send:hover{border-color:var(--ink);color:var(--ink)}
     .fb-thanks{display:none;font-size:13px;color:var(--accent);margin-top:10px;font-style:italic}
-    .try-again{padding:32px 0 0;text-align:center}
+    .try-again{padding:32px 0;text-align:center}
     .try-again button{background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:11px 26px;font-family:var(--sans);font-size:14px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .try-again button:hover{border-color:var(--ink);color:var(--ink)}
-    footer{padding:36px 0;border-top:1px solid var(--line)}
+    footer{padding:36px 0;border-top:1px solid var(--line);margin-top:20px}
     .footer-inner{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end}
     .footer-left p{font-size:12px;color:var(--ink-soft);line-height:1.6;max-width:380px}
     .footer-right{font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap}
@@ -79,17 +88,16 @@
   </style>
 </head>
 <body>
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-dots"><span></span><span></span><span></span></div>
-    <p class="loading-label">Reading what you shared&hellip;</p>
-  </div>
-  <div id="main-screen" class="screen active">
-    <nav><div class="w"><span class="wordmark">Nova<b>*</b></span></div></nav>
-    <div class="main-body"><div class="w"><div class="inner">
+  <nav><div class="w"><span class="wordmark" onclick="resetAll()">Nova<b>*</b></span></div></nav>
+
+  <div class="w">
+    <!-- Input -->
+    <div class="input-area">
       <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
       <span class="sub-note">Tell us what you’ve been going through — symptoms, patterns, how long it’s been, what doctors have said. Whatever feels relevant. We’ll help you make sense of it and figure out your next step.</span>
-      <span class="starters-label">Start with one of these, or write your own</span>
-      <div class="starters">
+
+      <span class="starters-label" id="startersLabel">Start with one of these, or write your own</span>
+      <div class="starters" id="starters">
         <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
         <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
         <button class="starter" onclick="addStarter('My doctors say everything is normal, but ')">My doctors say it’s normal, but…</button>
@@ -97,28 +105,35 @@
         <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
         <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
       </div>
+
       <textarea id="symptomInput" placeholder="I’ve been feeling…&#10;It started about…&#10;Sometimes it gets worse when…&#10;I’ve seen doctors but…" aria-label="Describe your symptoms"></textarea>
       <p class="char-hint" id="charHint">&nbsp;</p>
       <p class="inline-msg warn" id="emptyState">Can you add a little more? When it started, what it feels like — anything helps.</p>
       <p class="inline-msg err" id="errorMsg">Something went wrong. Please try again in a moment.</p>
-      <div class="submit-row">
+      <div class="submit-row" id="submitRow">
         <span class="submit-note">Everything you share stays private.</span>
         <button class="btn" id="submitBtn" onclick="submitSymptoms()">Continue</button>
       </div>
-    </div></div></div>
-    <footer><div class="w"><div class="footer-inner">
-      <div class="footer-left"><p>Nova’s not a doctor. It’s a place to find the words.</p></div>
-      <div class="footer-right">Nova* &mdash; Early Access<br><a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></div>
-    </div></div></footer>
-  </div>
-  <div id="output-screen" class="screen">
-    <nav><div class="w"><span class="wordmark" style="cursor:pointer" onclick="goHome()">Nova<b>*</b></span></div></nav>
-    <main><div class="w">
-      <div class="output-intro"><h2>Here’s what we heard:</h2></div>
+    </div>
+
+    <!-- Loading (inline, below input) -->
+    <div class="loading-inline" id="loadingInline">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p class="loading-label">Reading what you shared…</p>
+    </div>
+
+    <!-- Divider -->
+    <hr class="response-divider" id="responseDivider" style="display:none">
+
+    <!-- Response (flows in below) -->
+    <div class="response-area" id="responseArea">
       <div class="out-block"><span class="out-label">You described</span><div class="out-body" id="out-reflection"></div></div>
       <div class="out-block"><span class="out-label">Others in the same situation often describe</span><div class="out-body" id="out-patterns"></div></div>
       <div class="out-block"><span class="out-label">Some people find it helpful to</span><div class="out-body" id="out-nav"></div></div>
-      <div class="out-close"><div id="out-close"></div><p class="signal-note">The more people share, the more we learn. What you just shared helps.</p></div>
+      <div class="out-close">
+        <div id="out-close"></div>
+        <p class="signal-note">The more people share, the more we learn. What you just shared helps.</p>
+      </div>
       <div class="feedback">
         <p class="feedback-q">Did this help you find the words?</p>
         <div class="feedback-opts">
@@ -134,26 +149,98 @@
         </div>
       </div>
       <div class="try-again"><button onclick="resetAll()">Start over</button></div>
-    </div></main>
-    <footer><div class="w"><div class="footer-inner">
-      <div class="footer-left"><p>Nova’s not a doctor. It’s a place to find the words.</p></div>
-      <div class="footer-right">Nova* &mdash; Early Access<br><a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></div>
-    </div></div></footer>
+    </div>
   </div>
+
+  <footer>
+    <div class="w">
+      <div class="footer-inner">
+        <div class="footer-left"><p>Nova’s not a doctor. It’s a place to find the words.</p></div>
+        <div class="footer-right">Nova* — Early Access<br><a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></div>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'})}
-    function goHome(){resetAll()}
     function addStarter(text){const el=document.getElementById('symptomInput');el.value=el.value?el.value.trimEnd()+'\n'+text:text;el.focus();el.setSelectionRange(el.value.length,el.value.length);el.dispatchEvent(new Event('input'))}
+
     const inputEl=document.getElementById('symptomInput'),hintEl=document.getElementById('charHint'),emptyEl=document.getElementById('emptyState');
     inputEl.addEventListener('input',()=>{emptyEl.classList.remove('active');const len=inputEl.value.trim().length;hintEl.classList.remove('good');if(len===0)hintEl.textContent='\u00a0';else if(len<80)hintEl.textContent='Keep going \u2014 more detail helps.';else if(len<250)hintEl.textContent='Good. A little more context helps.';else{hintEl.textContent='This is really helpful.';hintEl.classList.add('good')}});
-    async function submitSymptoms(){const text=inputEl.value.trim(),btn=document.getElementById('submitBtn'),errEl=document.getElementById('errorMsg'),overlay=document.getElementById('loadingOverlay');errEl.classList.remove('active');if(!text||text.length<30){emptyEl.classList.add('active');inputEl.focus();return}btn.disabled=true;overlay.classList.add('active');try{const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symptoms:text})});if(!res.ok)throw new Error();const data=await res.json();renderOutput(data);overlay.classList.remove('active');showScreen('output-screen')}catch{overlay.classList.remove('active');btn.disabled=false;errEl.classList.add('active')}}
-    function renderOutput(data){if(data.reflection){set('out-reflection',toParas(data.reflection));set('out-patterns',toParas(data.patterns));set('out-nav',toParas(data.navigation));set('out-close',toClose(data.close))}else if(data.response){set('out-reflection',toParas(data.response));set('out-patterns','');set('out-nav','');set('out-close','')}}
+
+    async function submitSymptoms(){
+      const text=inputEl.value.trim();
+      const btn=document.getElementById('submitBtn');
+      const errEl=document.getElementById('errorMsg');
+      errEl.classList.remove('active');
+      if(!text||text.length<30){emptyEl.classList.add('active');inputEl.focus();return}
+
+      // Lock textarea, hide starters, show loading inline
+      btn.disabled=true;
+      inputEl.classList.add('submitted');
+      inputEl.readOnly=true;
+      document.getElementById('starters').classList.add('hidden');
+      document.getElementById('startersLabel').style.display='none';
+      document.getElementById('submitRow').style.display='none';
+      hintEl.textContent='\u00a0';
+      document.getElementById('loadingInline').classList.add('active');
+
+      try{
+        const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symptoms:text})});
+        if(!res.ok) throw new Error();
+        const data=await res.json();
+
+        // Hide loading, render response below
+        document.getElementById('loadingInline').classList.remove('active');
+        renderOutput(data);
+        document.getElementById('responseDivider').style.display='block';
+        document.getElementById('responseArea').classList.add('active');
+
+        // Smooth scroll to response
+        setTimeout(()=>document.getElementById('responseDivider').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+
+      } catch{
+        document.getElementById('loadingInline').classList.remove('active');
+        inputEl.classList.remove('submitted');
+        inputEl.readOnly=false;
+        document.getElementById('starters').classList.remove('hidden');
+        document.getElementById('startersLabel').style.display='';
+        document.getElementById('submitRow').style.display='';
+        btn.disabled=false;
+        errEl.classList.add('active');
+      }
+    }
+
+    function renderOutput(data){
+      if(data.reflection){set('out-reflection',toParas(data.reflection));set('out-patterns',toParas(data.patterns));set('out-nav',toParas(data.navigation));set('out-close',toClose(data.close))}
+      else if(data.response){set('out-reflection',toParas(data.response));set('out-patterns','');set('out-nav','');set('out-close','')}
+    }
+
     function set(id,html){document.getElementById(id).innerHTML=html||''}
-    function toParas(text){if(!text)return '';const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);if(lines.length>1&&lines.every(l=>/^[-\u2022]/.test(l)))return '<ul>'+lines.map(l=>`<li>${l.replace(/^[-\u2022]\s*/,'')}</li>`).join('')+'</ul>';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
-    function toClose(text){if(!text)return '';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
+    function toParas(text){if(!text)return'';const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);if(lines.length>1&&lines.every(l=>/^[-\u2022]/.test(l)))return'<ul>'+lines.map(l=>`<li>${l.replace(/^[-\u2022]\s*/,'')}</li>`).join('')+'</ul>';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
+    function toClose(text){if(!text)return'';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}
+
     function selectFb(btn){document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('fbFollowup').classList.add('active')}
     function sendFeedback(){document.getElementById('fbThanks').style.display='block';document.getElementById('fbText').disabled=true;document.querySelector('.fb-send').disabled=true}
-    function resetAll(){inputEl.value='';hintEl.textContent='\u00a0';hintEl.classList.remove('good');emptyEl.classList.remove('active');document.getElementById('errorMsg').classList.remove('active');document.getElementById('loadingOverlay').classList.remove('active');document.getElementById('submitBtn').disabled=false;document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('fbFollowup').classList.remove('active');document.getElementById('fbText').value='';document.getElementById('fbText').disabled=false;const fbSend=document.querySelector('.fb-send');if(fbSend)fbSend.disabled=false;document.getElementById('fbThanks').style.display='none';['out-reflection','out-patterns','out-nav','out-close'].forEach(id=>set(id,''));showScreen('main-screen')}
+
+    function resetAll(){
+      inputEl.value='';inputEl.classList.remove('submitted');inputEl.readOnly=false;
+      hintEl.textContent='\u00a0';hintEl.classList.remove('good');
+      emptyEl.classList.remove('active');document.getElementById('errorMsg').classList.remove('active');
+      document.getElementById('submitBtn').disabled=false;
+      document.getElementById('starters').classList.remove('hidden');
+      document.getElementById('startersLabel').style.display='';
+      document.getElementById('submitRow').style.display='';
+      document.getElementById('loadingInline').classList.remove('active');
+      document.getElementById('responseDivider').style.display='none';
+      document.getElementById('responseArea').classList.remove('active');
+      document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));
+      document.getElementById('fbFollowup').classList.remove('active');
+      document.getElementById('fbText').value='';document.getElementById('fbText').disabled=false;
+      const fbSend=document.querySelector('.fb-send');if(fbSend)fbSend.disabled=false;
+      document.getElementById('fbThanks').style.display='none';
+      ['out-reflection','out-patterns','out-nav','out-close'].forEach(id=>set(id,''));
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
   </script>
 </body>
 </html>
