@@ -22,7 +22,7 @@ Rules:
 - Be direct and specific
 - In the patterns field: one short intro sentence, then 2–4 short phrases on separate lines starting with — that represent the specific cluster
 
-Respond ONLY with raw JSON, no markdown, no code fences:
+Respond ONLY with raw JSON, no markdown, no code fences, no actual newline characters inside string values:
 {"reflection":"2-3 sentences, specific and warm. Show you heard the details.","patterns":"One intro sentence.\n— specific phrase\n— specific phrase\n— specific phrase","navigation":"2-3 sentences, concrete next step.","close":"One sentence. The beginning of something."}`;
 
     const guidedPrompt = `You are Nova, having a gentle conversation to understand someone's undiagnosed health situation. Ask ONE thoughtful question at a time. Follow the thread naturally. After 3-5 exchanges when you understand their pattern, stop asking and deliver the full analysis.
