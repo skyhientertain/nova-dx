@@ -10,201 +10,202 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--bg:#F9F7F4;--surface:#FFFFFF;--ink:#1C1A17;--ink-mid:#5C5751;--ink-soft:#9C9590;--line:#E8E4DF;--accent:#B07A3E;--accent-lt:#FBF5EC;--accent-dk:#8A5C28;--signal-bg:#FDF6EC;--signal-border:#E8D5B4;--r:8px;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
-    html,body{height:100%;overflow:hidden}
-    body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;display:flex;flex-direction:column}
-    nav{flex-shrink:0;padding:18px 0;border-bottom:1px solid var(--line);background:var(--bg)}
-    .nav-inner{max-width:720px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+    body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;min-height:100vh;padding-bottom:100px}
+    .max{max-width:720px;margin:0 auto;padding:0 24px}
+    nav{padding:18px 0;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:50}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between}
     .wordmark{font-family:var(--serif);font-weight:300;font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.5;cursor:pointer}
     .wordmark b{color:var(--accent);font-weight:300;opacity:1}
     .journal-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-family:var(--sans);font-size:11px;color:var(--ink-soft);cursor:pointer;transition:all .2s;display:none;align-items:center;gap:5px}
     .journal-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
     .journal-btn.show{display:flex}
     .j-count{background:var(--accent);color:#fff;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:500}
-    .thread{flex:1;overflow-y:auto;padding:0 0 16px}
-    .thread-inner{max-width:720px;margin:0 auto;padding:0 24px}
-    .welcome{padding:24px 0 16px}
-    .welcome h1{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,36px);line-height:1.2;margin-bottom:12px;color:var(--ink)}
-    .welcome h1 em{font-style:italic}
-    .welcome p{font-size:14px;color:var(--ink-mid);line-height:1.65;margin-bottom:28px;max-width:520px}
-    .welcome-back{background:var(--accent-lt);border:1px solid var(--signal-border);border-radius:var(--r);padding:11px 16px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .welcome-back.show{display:flex}
+    .welcome{padding:36px 0 28px}
+    .wb{background:var(--accent-lt);border:1px solid var(--signal-border);border-radius:var(--r);padding:11px 16px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .wb.show{display:flex}
     .wb-text{font-size:13px;color:var(--ink-mid)}
-    .wb-link{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;white-space:nowrap}
-
-    /* Mode toggle */
-    .mode-toggle{display:flex;gap:8px;margin-bottom:24px}
+    .wb-link{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline}
+    .welcome h1{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,34px);line-height:1.2;margin-bottom:10px}
+    .welcome h1 em{font-style:italic}
+    .welcome p{font-size:14px;color:var(--ink-mid);line-height:1.65;margin-bottom:24px;max-width:500px}
+    .mode-toggle{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
     .mode-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:8px 18px;font-family:var(--sans);font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .2s}
     .mode-btn:hover{border-color:var(--ink-mid);color:var(--ink-mid)}
     .mode-btn.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-
     .starters-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:block}
     .starters{display:flex;flex-wrap:wrap;gap:7px}
     .starter{background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s;white-space:nowrap}
     .starter:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
-    .starters-section{transition:opacity .2s}
-    .starters-section.hidden{display:none}
-
-    /* Guided intro */
-    .guided-intro{display:none;padding:16px 18px;background:var(--signal-bg);border:1px solid var(--signal-border);border-radius:var(--r);font-size:14px;color:var(--ink-mid);line-height:1.6}
-    .guided-intro.show{display:block}
-
-    /* Messages */
-    .msg{margin-top:20px;animation:fadeUp .3s ease}
+    .messages{padding-top:8px}
+    .msg{margin-top:18px;animation:fadeUp .3s ease}
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .msg-user{display:flex;justify-content:flex-end}
-    .msg-user .bubble{background:var(--ink);color:#F9F7F4;border-radius:18px 18px 4px 18px;padding:13px 17px;font-size:15px;line-height:1.6;max-width:85%;font-weight:300}
-    .msg-nova{}
-    .nova-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+    .msg-user .bubble{background:var(--ink);color:#F9F7F4;border-radius:18px 18px 4px 18px;padding:12px 16px;font-size:15px;line-height:1.6;max-width:85%;font-weight:300}
+    .nova-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
     .nova-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
-    .nova-question{font-family:var(--serif);font-size:clamp(17px,2.2vw,20px);font-weight:300;color:var(--ink);line-height:1.5}
+    .nova-question{font-family:var(--serif);font-size:clamp(17px,2.2vw,20px);font-weight:300;color:var(--ink);line-height:1.5;margin-bottom:14px}
     .nova-body{font-size:16px;color:var(--ink-mid);line-height:1.75}
-    .nova-body p{margin-bottom:13px}.nova-body p:last-child{margin-bottom:0}
-    .signal-card{background:var(--signal-bg);border:1px solid var(--signal-border);border-left:3px solid var(--accent);border-radius:var(--r);padding:18px 20px;margin:18px 0}
-    .signal-header{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dk);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+    .nova-body p{margin-bottom:12px}.nova-body p:last-child{margin-bottom:0}
+
+    /* Answer chips for guided mode */
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+    .chip{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:9px 18px;font-family:var(--sans);font-size:14px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+    .chip.selected{background:var(--ink);color:var(--bg);border-color:var(--ink);cursor:default}
+    .chip:disabled,.chip.selected{pointer-events:none}
+    .q-progress{font-size:11px;color:var(--ink-soft);margin-bottom:10px;letter-spacing:.05em}
+
+    /* User chip answer shown as small bubble */
+    .chip-answer{display:inline-flex;justify-content:flex-end;width:100%}
+    .chip-answer .bubble{background:var(--ink);color:#F9F7F4;border-radius:18px 18px 4px 18px;padding:8px 14px;font-size:14px;font-weight:300}
+
+    .signal-card{background:var(--signal-bg);border:1px solid var(--signal-border);border-left:3px solid var(--accent);border-radius:var(--r);padding:18px 20px;margin:16px 0}
+    .signal-header{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dk);margin-bottom:11px;display:flex;align-items:center;gap:7px}
     .signal-header::before{content:'✶';font-size:12px;color:var(--accent)}
-    .signal-intro{font-size:14px;color:var(--ink-mid);margin-bottom:10px;line-height:1.6}
+    .signal-intro{font-size:14px;color:var(--ink-mid);margin-bottom:9px;line-height:1.6}
     .signal-quotes{display:flex;flex-direction:column;gap:7px}
     .signal-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink);line-height:1.5;padding-left:12px;border-left:2px solid var(--accent-lt)}
-    .nav-section{margin-top:18px}
-    .nav-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px;display:block}
+    .nav-section{margin-top:16px}
+    .nav-label{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:block}
     .nav-body{font-size:15px;color:var(--ink-mid);line-height:1.7}
-    .nav-body p{margin-bottom:11px}.nav-body p:last-child{margin-bottom:0}
-    .close-line{font-family:var(--serif);font-size:clamp(17px,2.2vw,21px);font-weight:300;line-height:1.5;color:var(--ink);margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
-    .signal-note{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:8px}
-    .followup-user{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
-    .loading-msg{margin-top:20px}
-    .loading-inner{display:flex;align-items:center;gap:9px}
+    .nav-body p{margin-bottom:10px}.nav-body p:last-child{margin-bottom:0}
+    .close-line{font-family:var(--serif);font-size:clamp(17px,2.2vw,21px);font-weight:300;line-height:1.5;color:var(--ink);margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+    .signal-note{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:7px}
+    .followup-sep{border:none;border-top:1px solid var(--line);margin:20px 0 0}
+    .loading-msg{margin-top:18px}
+    .loading-inner{display:flex;align-items:center;gap:8px}
     .loading-dots{display:flex;gap:5px}
     .loading-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.3s ease-in-out infinite}
     .loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
     @keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
     .loading-text{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-soft)}
-    .feedback{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
-    .feedback-q{font-size:14px;color:var(--ink);margin-bottom:10px}
+    .feedback{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+    .feedback-q{font-size:14px;color:var(--ink);margin-bottom:9px}
     .feedback-opts{display:flex;gap:7px;flex-wrap:wrap}
-    .fb-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 15px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .fb-btn{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .fb-btn:hover,.fb-btn.selected{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
-    .fb-followup{display:none;margin-top:11px}.fb-followup.active{display:block}
+    .fb-followup{display:none;margin-top:10px}.fb-followup.active{display:block}
     .fb-followup label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px}
-    .fb-followup textarea{width:100%;min-height:56px;padding:9px 13px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:14px;color:var(--ink);resize:none;outline:none}
+    .fb-followup textarea{width:100%;min-height:52px;padding:9px 13px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--sans);font-size:14px;color:var(--ink);resize:none;outline:none}
     .fb-followup textarea:focus{border-color:var(--accent)}
-    .fb-send{margin-top:7px;background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 15px;font-family:var(--sans);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .fb-send{margin-top:6px;background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 14px;font-family:var(--sans);font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .fb-send:hover{border-color:var(--ink);color:var(--ink)}
-    .fb-thanks{display:none;font-size:12px;color:var(--accent);margin-top:7px;font-style:italic}
-    .input-bar{flex-shrink:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 16px}
+    .fb-thanks{display:none;font-size:12px;color:var(--accent);margin-top:6px;font-style:italic}
+    .thread-footer{padding:16px 0 4px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:24px}
+    .thread-footer p{font-size:11px;color:var(--ink-soft)}
+    .thread-footer a{color:var(--ink-soft);text-decoration:none}.thread-footer a:hover{color:var(--ink)}
+    .new-entry{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline}.new-entry:hover{color:var(--ink)}
+
+    /* Fixed input bar */
+    .input-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 0 14px;z-index:40}
     .input-bar-inner{max-width:720px;margin:0 auto;padding:0 24px}
     .input-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;transition:border-color .2s;overflow:hidden}
     .input-wrap:focus-within{border-color:var(--accent)}
-    #mainInput{width:100%;padding:13px 16px 9px;background:transparent;border:none;font-family:var(--sans);font-size:15px;font-weight:300;color:var(--ink);resize:none;outline:none;line-height:1.6;max-height:160px;min-height:50px;overflow-y:auto;display:block}
+    #mainInput{width:100%;padding:12px 16px 8px;background:transparent;border:none;font-family:var(--sans);font-size:15px;font-weight:300;color:var(--ink);resize:none;outline:none;line-height:1.6;max-height:140px;min-height:48px;overflow-y:auto;display:block}
     #mainInput::placeholder{color:var(--ink-soft)}
-    .input-footer{display:flex;align-items:center;justify-content:space-between;padding:0 13px 9px}
+    .input-footer{display:flex;align-items:center;justify-content:space-between;padding:0 12px 8px}
     .input-hint{font-size:11px;color:var(--ink-soft);transition:color .2s}
     .input-hint.good{color:var(--accent)}
     .send-btn{background:var(--ink);color:var(--bg);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
     .send-btn:hover{background:#333}.send-btn:disabled{background:var(--line);cursor:not-allowed}
     .send-btn svg{width:13px;height:13px;fill:currentColor}
-    .input-inline-err{font-size:12px;color:#B91C1C;font-style:italic;padding:0 0 5px 2px;display:none}
+    .input-inline-err{font-size:12px;color:#B91C1C;font-style:italic;padding:0 0 4px 2px;display:none}
     .input-inline-err.show{display:block}
+
+    /* Hide write input in guided mode */
+    .input-bar.guided-mode{display:none}
+
     .journal-overlay{display:none;position:fixed;inset:0;background:rgba(249,247,244,.97);z-index:300;overflow-y:auto}
     .journal-overlay.open{display:block}
     .journal-panel{max-width:600px;margin:0 auto;padding:40px 24px 80px}
-    .journal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px}
+    .journal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
     .journal-title{font-family:var(--serif);font-weight:300;font-size:26px;color:var(--ink)}
-    .journal-close{background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 15px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+    .journal-close{background:transparent;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-family:var(--sans);font-size:13px;color:var(--ink-mid);cursor:pointer;transition:all .2s}
     .journal-close:hover{border-color:var(--ink);color:var(--ink)}
     .journal-empty{font-size:15px;color:var(--ink-soft);font-style:italic;text-align:center;padding:60px 0}
-    .jentry{border-bottom:1px solid var(--line);padding:20px 0;cursor:pointer}
+    .jentry{border-bottom:1px solid var(--line);padding:18px 0;cursor:pointer}
     .jentry:last-child{border-bottom:none}
     .jentry-date{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
-    .jentry-preview{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink-mid);line-height:1.5;margin-bottom:5px}
+    .jentry-preview{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink-mid);line-height:1.5;margin-bottom:4px}
     .jentry-meta{font-size:12px;color:var(--ink-soft)}
     .jentry:hover .jentry-preview{color:var(--ink)}
-    .jentry-full{display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+    .jentry-full{display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
     .jentry-full.open{display:block}
-    .j-user-text{font-size:14px;color:var(--ink-mid);line-height:1.7;border-left:2px solid var(--line);padding-left:12px;margin-bottom:11px;font-style:italic}
-    .j-nova-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+    .j-user-text{font-size:14px;color:var(--ink-mid);line-height:1.7;border-left:2px solid var(--line);padding-left:12px;margin-bottom:10px;font-style:italic}
+    .j-nova-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;display:block}
     .j-nova-text{font-size:14px;color:var(--ink-mid);line-height:1.7}
-    .j-nova-text p{margin-bottom:7px}.j-nova-text p:last-child{margin-bottom:0}
-    .j-collapse{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;margin-top:10px;display:block}
-    .j-collapse:hover{color:var(--ink)}
-    .thread-footer{padding:18px 0 6px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:28px}
-    .thread-footer p{font-size:11px;color:var(--ink-soft)}
-    .thread-footer a{color:var(--ink-soft);text-decoration:none}.thread-footer a:hover{color:var(--ink)}
-    .new-entry{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline}.new-entry:hover{color:var(--ink)}
-    @media(max-width:480px){.msg-user .bubble{max-width:95%}.mode-toggle{flex-direction:column;gap:6px}.mode-btn{text-align:center}}
+    .j-nova-text p{margin-bottom:6px}.j-nova-text p:last-child{margin-bottom:0}
+    .j-collapse{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;margin-top:8px;display:block}
+    @media(max-width:480px){.msg-user .bubble{max-width:95%}.mode-toggle{flex-direction:column;gap:6px}.mode-btn{text-align:center}.chips{gap:6px}}
   </style>
 </head>
 <body>
   <div class="journal-overlay" id="journalOverlay">
     <div class="journal-panel">
-      <div class="journal-header">
-        <h2 class="journal-title">Your journal</h2>
-        <button class="journal-close" onclick="closeJournal()">Close</button>
-      </div>
+      <div class="journal-header"><h2 class="journal-title">Your journal</h2><button class="journal-close" onclick="closeJournal()">Close</button></div>
       <div id="journalEntries"></div>
     </div>
   </div>
-  <nav>
-    <div class="nav-inner">
-      <span class="wordmark" onclick="newEntry()">Nova<b>*</b></span>
-      <button class="journal-btn" id="journalBtn" onclick="openJournal()">Journal <span class="j-count" id="jCount">0</span></button>
+
+  <nav><div class="max"><div class="nav-inner">
+    <span class="wordmark" onclick="newEntry()">Nova<b>*</b></span>
+    <button class="journal-btn" id="journalBtn" onclick="openJournal()">Journal <span class="j-count" id="jCount">0</span></button>
+  </div></div></nav>
+
+  <div class="max">
+    <div id="welcomeState" class="welcome">
+      <div class="wb" id="wb"><span class="wb-text" id="wbText"></span><span class="wb-link" onclick="openJournal()">View your journal →</span></div>
+      <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
+      <p>Tell us what you’ve been going through. We’ll help you make sense of it and figure out your next step.</p>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeWrite" onclick="setMode('write')">I’ll describe it</button>
+        <button class="mode-btn" id="modeGuided" onclick="setMode('guided')">Nova asks the questions</button>
+      </div>
+      <div id="startersSection">
+        <span class="starters-label">Start with one of these</span>
+        <div class="starters">
+          <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
+          <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
+          <button class="starter" onclick="addStarter('My doctors say it’s normal, but ')">My doctors say it’s normal, but…</button>
+          <button class="starter" onclick="addStarter('The strangest symptom is ')">The strangest symptom is…</button>
+          <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
+          <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
+        </div>
+      </div>
     </div>
-  </nav>
-  <div class="thread" id="thread">
-    <div class="thread-inner" id="threadInner">
-      <div id="welcomeState" class="welcome">
-        <div class="welcome-back" id="welcomeBack">
-          <span class="wb-text" id="wbText"></span>
-          <span class="wb-link" onclick="openJournal()">View your journal →</span>
-        </div>
-        <h1>You know something isn’t right.<br><em>You just don’t have the words yet.</em></h1>
-        <p>Tell us what you’ve been going through. We’ll help you make sense of it and figure out your next step.</p>
 
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="modeWrite" onclick="setMode('write')">I’ll describe it</button>
-          <button class="mode-btn" id="modeGuided" onclick="setMode('guided')">Nova asks the questions</button>
-        </div>
-
-        <div class="starters-section" id="startersSection">
-          <span class="starters-label">Start with one of these</span>
-          <div class="starters">
-            <button class="starter" onclick="addStarter('I’ve been feeling ')">I’ve been feeling…</button>
-            <button class="starter" onclick="addStarter('It started about ')">It started about…</button>
-            <button class="starter" onclick="addStarter('My doctors say it’s normal, but ')">My doctors say it’s normal, but…</button>
-            <button class="starter" onclick="addStarter('The strangest symptom is ')">The strangest symptom is…</button>
-            <button class="starter" onclick="addStarter('It gets worse when ')">It gets worse when…</button>
-            <button class="starter" onclick="addStarter('I used to be able to ')">I used to be able to…</button>
-          </div>
-        </div>
-
-        <div class="guided-intro" id="guidedIntro">
-          Nova will ask you a few questions — answer as much or as little as you want. When it has enough, it will show you what it found.
-        </div>
-      </div>
-      <div id="messages"></div>
-      <div class="thread-footer" id="threadFooter" style="display:none">
-        <p>Nova’s not a doctor. It’s a place to find the words. · <a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></p>
-        <span class="new-entry" onclick="newEntry()">Start a new entry</span>
-      </div>
+    <div class="messages" id="messages"></div>
+    <div class="thread-footer" id="threadFooter" style="display:none">
+      <p>Nova’s not a doctor. It’s a place to find the words. · <a href="mailto:tellnovanow@gmail.com">tellnovanow@gmail.com</a></p>
+      <span class="new-entry" onclick="newEntry()">Start a new entry</span>
     </div>
   </div>
-  <div class="input-bar">
+
+  <div class="input-bar" id="inputBar">
     <div class="input-bar-inner">
       <p class="input-inline-err" id="inputErr">Can you add a little more? When it started, what it feels like — anything helps.</p>
       <div class="input-wrap">
         <textarea id="mainInput" rows="1" placeholder="Describe what you’ve been going through…" aria-label="Your message" oninput="onInput(this)"></textarea>
         <div class="input-footer">
           <span class="input-hint" id="inputHint">Everything you share stays private.</span>
-          <button class="send-btn" id="sendBtn" onclick="handleSend()" aria-label="Send">
-            <svg viewBox="0 0 16 16"><path d="M2 8l12-5.5-4.5 5.5 4.5 5.5z"/></svg>
-          </button>
+          <button class="send-btn" id="sendBtn" onclick="handleSend()" aria-label="Send"><svg viewBox="0 0 16 16"><path d="M2 8l12-5.5-4.5 5.5 4.5 5.5z"/></svg></button>
         </div>
       </div>
     </div>
   </div>
+
   <script>
     const JKEY='nova_journal';
     let hist=[],sessId=null,xCount=0,hasResponse=false,mode='write';
+    let guidedAnswers=[],guidedStep=0;
+
+    const QUESTIONS=[
+      {q:"Which part of your body is most affected?",opts:["Head & mind","Chest & heart","Stomach & gut","Limbs & muscles","Hard to pin down"]},
+      {q:"How long has this been going on?",opts:["A few weeks","Several months","About a year","Over a year","Years"]},
+      {q:"Does rest or sleep make it better?",opts:["Yes, it helps","Slightly","No difference","Makes it worse"]},
+      {q:"What have doctors told you?",opts:["Everything looks normal","Possible stress or anxiety","Found something minor","Haven’t been tested yet"]},
+      {q:"How much has it changed your daily life?",opts:["I push through it","I’ve had to cut back","It’s affecting work or relationships","I barely recognize myself"]}
+    ];
 
     (function(){
       const j=getJ();
@@ -212,7 +213,7 @@
         const d=new Date(j[0].date),today=new Date();
         const isToday=d.toDateString()===today.toDateString();
         document.getElementById('wbText').textContent=isToday?'You were here earlier today.':'Last entry: '+d.toLocaleDateString('en-US',{month:'long',day:'numeric'})+'.';
-        document.getElementById('welcomeBack').classList.add('show');
+        document.getElementById('wb').classList.add('show');
       }
       updateJNav();
       autoResize(document.getElementById('mainInput'));
@@ -235,26 +236,77 @@
       mode=m;
       document.getElementById('modeWrite').classList.toggle('active',m==='write');
       document.getElementById('modeGuided').classList.toggle('active',m==='guided');
-      document.getElementById('startersSection').classList.toggle('hidden',m==='guided');
-      document.getElementById('guidedIntro').classList.remove('show');
-      const inp=document.getElementById('mainInput');
-      inp.placeholder=m==='guided'?'Reply…':'Describe what you’ve been going through…';
+      document.getElementById('startersSection').style.display=m==='write'?'':'none';
+      document.getElementById('inputBar').classList.toggle('guided-mode',m==='guided');
       if(m==='guided'){
-        // Immediately show Nova's opening question — no API call needed
         document.getElementById('welcomeState').style.display='none';
-        sessId=genId();hist=[];
-        const msgs=document.getElementById('messages');
-        const div=document.createElement('div');div.className='msg';
-        div.innerHTML=`<div class="msg-nova"><div class="nova-label">Nova</div><div class="nova-question">What’s the hardest part of this to explain to anyone?</div></div>`;
-        msgs.appendChild(div);
-        scrollThread(true);
+        sessId=genId();hist=[];guidedAnswers=[];guidedStep=0;
+        showGuidedQuestion(0);
+        scrollBottom();
       } else {
-        // Switching back to write — reset
         document.getElementById('messages').innerHTML='';
         document.getElementById('welcomeState').style.display='';
-        hist=[];sessId=null;hasResponse=false;
+        hist=[];sessId=null;hasResponse=false;guidedAnswers=[];guidedStep=0;
       }
-      inp.focus();
+    }
+
+    function showGuidedQuestion(step){
+      const msgs=document.getElementById('messages');
+      const q=QUESTIONS[step];
+      const div=document.createElement('div');div.className='msg';div.id='gq'+step;
+      div.innerHTML=`<div class="msg-nova"><div class="nova-label">Nova</div><p class="q-progress">Question ${step+1} of ${QUESTIONS.length}</p><div class="nova-question">${esc(q.q)}</div><div class="chips">${q.opts.map(o=>`<button class="chip" onclick="pickAnswer(${step},this,'${esc(o)}')">${esc(o)}</button>`).join('')}</div></div>`;
+      msgs.appendChild(div);
+      setTimeout(()=>div.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+    }
+
+    function pickAnswer(step,btn,answer){
+      // Disable all chips in this question
+      const qDiv=document.getElementById('gq'+step);
+      qDiv.querySelectorAll('.chip').forEach(c=>{c.classList.remove('selected');c.disabled=true;});
+      btn.classList.add('selected');
+      guidedAnswers.push({q:QUESTIONS[step].q,a:answer});
+
+      // Show user's answer as a bubble
+      const msgs=document.getElementById('messages');
+      const rep=document.createElement('div');rep.className='msg';
+      rep.innerHTML=`<div class="chip-answer"><div class="bubble">${esc(answer)}</div></div>`;
+      msgs.appendChild(rep);
+
+      guidedStep=step+1;
+      if(guidedStep<QUESTIONS.length){
+        setTimeout(()=>{showGuidedQuestion(guidedStep);scrollBottom();},400);
+      } else {
+        // All questions answered — send for analysis
+        setTimeout(()=>submitGuidedAnswers(),400);
+      }
+    }
+
+    async function submitGuidedAnswers(){
+      const msgs=document.getElementById('messages');
+      // Build structured message from answers
+      const userMsg=guidedAnswers.map(a=>`${a.q} → ${a.a}`).join('\n');
+      hist=[{role:'user',content:userMsg}];
+
+      const loadId='load'+Date.now();
+      const loadDiv=document.createElement('div');loadDiv.className='msg loading-msg';loadDiv.id=loadId;
+      loadDiv.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Looking for your pattern…</span></div>`;
+      msgs.appendChild(loadDiv);
+      scrollBottom();
+
+      const data=await callNova(hist,'write');
+      document.getElementById(loadId)?.remove();
+
+      if(!data){addErrorMsg();return;}
+      hist.push({role:'assistant',content:JSON.stringify(data)});
+      addNovaResponse(data,true);
+      hasResponse=true;xCount++;
+      document.getElementById('threadFooter').style.display='flex';
+      // Show write input for follow-ups
+      document.getElementById('inputBar').classList.remove('guided-mode');
+      document.getElementById('mainInput').placeholder='Add more context or ask a follow-up…';
+      document.getElementById('inputHint').textContent='Continue the conversation…';
+      saveSession();
+      scrollBottom();
     }
 
     function addStarter(text){
@@ -270,101 +322,49 @@
       const hint=document.getElementById('inputHint');
       hint.classList.remove('good');
       document.getElementById('inputErr').classList.remove('show');
-      if(mode==='guided'){hint.textContent='Reply to Nova…';return;}
       if(len===0)hint.textContent='Everything you share stays private.';
       else if(len<80)hint.textContent='Keep going — more detail helps.';
       else if(len<250)hint.textContent='Good. A little more context helps.';
       else{hint.textContent='This is really helpful.';hint.classList.add('good');}
     }
 
-    function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+    function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
 
     async function handleSend(){
       const el=document.getElementById('mainInput');
       const text=el.value.trim();
-      const errEl=document.getElementById('inputErr');
-      if(!text){if(mode==='write'){errEl.classList.add('show');}el.focus();return;}
-      if(mode==='write'&&text.length<30){errEl.classList.add('show');el.focus();return;}
-
-      const isFirst=!hasResponse&&hist.length===0;
+      if(!text||text.length<30){document.getElementById('inputErr').classList.add('show');el.focus();return;}
       const btn=document.getElementById('sendBtn');
       btn.disabled=true;
       el.value='';el.style.height='auto';
-      if(mode==='write'){document.getElementById('inputHint').textContent='Everything you share stays private.';document.getElementById('inputHint').classList.remove('good');}
-
-      if(isFirst){
-        document.getElementById('welcomeState').style.display='none';
-        sessId=genId();
-      }
-
+      document.getElementById('inputHint').textContent='Everything you share stays private.';
+      document.getElementById('inputHint').classList.remove('good');
+      const isFirst=!hasResponse;
+      if(isFirst){document.getElementById('welcomeState').style.display='none';sessId=sessId||genId();}
       hist.push({role:'user',content:text});
-      addUserMsg(text,isFirst&&mode==='write');
+      const msgs=document.getElementById('messages');
+      const userDiv=document.createElement('div');userDiv.className='msg';
+      userDiv.innerHTML=isFirst?`<div class="msg-user"><div class="bubble">${esc(text)}</div></div>`:`<div><hr class="followup-sep"><div class="msg-user" style="margin-top:12px"><div class="bubble">${esc(text)}</div></div></div>`;
+      msgs.appendChild(userDiv);
       const loadId='load'+Date.now();
-      addLoading(loadId);
-      scrollThread();
-
-      const data=await callNova(hist,mode);
+      const loadDiv=document.createElement('div');loadDiv.className='msg loading-msg';loadDiv.id=loadId;
+      loadDiv.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Reading what you shared…</span></div>`;
+      msgs.appendChild(loadDiv);
+      scrollBottom();
+      const data=await callNova(hist,'write');
       document.getElementById(loadId)?.remove();
-
       if(!data){hist.pop();btn.disabled=false;addErrorMsg();return;}
-
       hist.push({role:'assistant',content:JSON.stringify(data)});
-
-      if(mode==='guided'&&data.done===false&&data.question){
-        // Still in conversation — show Nova's question
-        addNovaQuestion(data.question,isFirst);
-        hasResponse=true;
-      } else {
-        // Full analysis — show pattern response
-        addNovaResponse(data,isFirst&&xCount===0);
-        hasResponse=true;
-        xCount++;
-        document.getElementById('threadFooter').style.display='flex';
-        // Switch input hint
-        document.getElementById('inputHint').textContent='Continue the conversation…';
-        saveSession();
-      }
-
+      addNovaResponse(data,isFirst&&xCount===0);
+      hasResponse=true;xCount++;
+      document.getElementById('threadFooter').style.display='flex';
       btn.disabled=false;
-      scrollThread(true);
+      scrollBottom();
+      saveSession();
     }
 
     async function callNova(messages,m){
-      try{
-        const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,mode:m})});
-        if(!res.ok)throw new Error();
-        return await res.json();
-      }catch{return null;}
-    }
-
-    function addUserMsg(text,isFirst){
-      const msgs=document.getElementById('messages');
-      const div=document.createElement('div');div.className='msg';
-      if(!isFirst){div.innerHTML=`<div class="followup-user"><div class="msg-user"><div class="bubble">${esc(text)}</div></div></div>`;}
-      else{div.innerHTML=`<div class="msg-user"><div class="bubble">${esc(text)}</div></div>`;}
-      msgs.appendChild(div);
-    }
-
-    function addNovaQuestion(question,isFirst){
-      const msgs=document.getElementById('messages');
-      const div=document.createElement('div');div.className='msg';
-      const wrap=isFirst?'':' class="followup-user"';
-      div.innerHTML=`<div${wrap}><div class="msg-nova"><div class="nova-label">Nova</div><div class="nova-question">${esc(question)}</div></div></div>`;
-      msgs.appendChild(div);
-    }
-
-    function addLoading(id){
-      const msgs=document.getElementById('messages');
-      const div=document.createElement('div');div.className='msg loading-msg';div.id=id;
-      div.innerHTML=`<div class="loading-inner"><div class="loading-dots"><span></span><span></span><span></span></div><span class="loading-text">Reading what you shared…</span></div>`;
-      msgs.appendChild(div);
-    }
-
-    function addErrorMsg(){
-      const msgs=document.getElementById('messages');
-      const div=document.createElement('div');div.className='msg';
-      div.innerHTML=`<div class="msg-nova"><span style="font-size:13px;color:#B91C1C;font-style:italic">Something went wrong. Please try again.</span></div>`;
-      msgs.appendChild(div);
+      try{const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,mode:m})});if(!res.ok)throw new Error();return await res.json();}catch{return null;}
     }
 
     function addNovaResponse(data,isFirst){
@@ -383,33 +383,29 @@
         }
       }
       if(data.navigation)h+=`<div class="nav-section"><span class="nav-label">A useful next step</span><div class="nav-body">${toP(data.navigation)}</div></div>`;
-      if(data.close){
-        h+=`<div class="close-line">${esc(data.close)}</div>`;
-        if(isFirst)h+=`<p class="signal-note">The more people share, the more we learn. What you just shared helps.</p>`;
-      }
+      if(data.close){h+=`<div class="close-line">${esc(data.close)}</div>`;if(isFirst)h+=`<p class="signal-note">The more people share, the more we learn. What you just shared helps.</p>`;}
       h+=`<div class="feedback"><p class="feedback-q">Did this help you find the words?</p><div class="feedback-opts"><button class="fb-btn" onclick="selFb(this)">Yes</button><button class="fb-btn" onclick="selFb(this)">Somewhat</button><button class="fb-btn" onclick="selFb(this)">No</button></div><div class="fb-followup" id="fbFollowup"><label>What did we miss?</label><textarea id="fbText" placeholder="(Optional)"></textarea><button class="fb-send" onclick="sendFb()">Send</button><p class="fb-thanks" id="fbThanks">Thank you. This genuinely helps.</p></div></div>`;
       h+=`</div>`;
       div.innerHTML=h;msgs.appendChild(div);
     }
 
+    function addErrorMsg(){const msgs=document.getElementById('messages');const div=document.createElement('div');div.className='msg';div.innerHTML=`<div class="msg-nova"><span style="font-size:13px;color:#B91C1C;font-style:italic">Something went wrong. Please try again.</span></div>`;msgs.appendChild(div);}
     function toP(text){if(!text)return'';return text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');}
     function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-    function scrollThread(smooth){const t=document.getElementById('thread');t.scrollTo({top:t.scrollHeight,behavior:smooth?'smooth':'instant'});}
+    function scrollBottom(){window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});}
     function selFb(btn){document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('fbFollowup').classList.add('active');}
     function sendFb(){const t=document.getElementById('fbThanks');if(t)t.style.display='block';const tx=document.getElementById('fbText');if(tx)tx.disabled=true;const s=document.querySelector('.fb-send');if(s)s.disabled=true;}
-
     function openJournal(){
       const j=getJ(),c=document.getElementById('journalEntries');
       if(!j.length){c.innerHTML='<p class="journal-empty">No entries yet.</p>';}
       else{c.innerHTML=j.map((e,i)=>{const exs=e.exchanges||Math.floor((e.history?.length||0)/2);return `<div class="jentry" onclick="toggleJ(${i})"><span class="jentry-date">${e.displayDate||e.date}</span><p class="jentry-preview">&ldquo;${esc(e.preview||'')}&hellip;&rdquo;</p><span class="jentry-meta">${exs} exchange${exs!==1?'s':''}</span><div class="jentry-full" id="jf${i}">${renderJ(e)}<span class="j-collapse" onclick="event.stopPropagation();toggleJ(${i})">↑ Collapse</span></div></div>`;}).join('');}
       document.getElementById('journalOverlay').classList.add('open');document.body.style.overflow='hidden';
     }
-    function renderJ(e){if(!e.history)return'';let h='';for(let i=0;i<e.history.length;i+=2){const u=e.history[i]?.content||'';let p={};try{p=JSON.parse(e.history[i+1]?.content||'{}');}catch{}h+=`<div style="margin-bottom:16px"><p class="j-user-text">${esc(u.slice(0,300))}${u.length>300?'&hellip;':''}</p>${p.reflection?`<span class="j-nova-label">Nova heard</span><div class="j-nova-text">${toP(p.reflection)}</div>`:p.question?`<span class="j-nova-label">Nova asked</span><div class="j-nova-text">${esc(p.question)}</div>`:''}</div>`;}return h;}
+    function renderJ(e){if(!e.history)return'';let h='';for(let i=0;i<e.history.length;i+=2){const u=e.history[i]?.content||'';let p={};try{p=JSON.parse(e.history[i+1]?.content||'{}');}catch{}h+=`<div style="margin-bottom:14px"><p class="j-user-text">${esc(u.slice(0,300))}${u.length>300?'&hellip;':''}</p>${p.reflection?`<span class="j-nova-label">Nova heard</span><div class="j-nova-text">${toP(p.reflection)}</div>`:''}</div>`;}return h;}
     function toggleJ(i){const el=document.getElementById('jf'+i);if(el)el.classList.toggle('open');}
     function closeJournal(){document.getElementById('journalOverlay').classList.remove('open');document.body.style.overflow='';}
-
     function newEntry(){
-      hist=[];sessId=null;xCount=0;hasResponse=false;mode='write';
+      hist=[];sessId=null;xCount=0;hasResponse=false;mode='write';guidedAnswers=[];guidedStep=0;
       document.getElementById('messages').innerHTML='';
       document.getElementById('welcomeState').style.display='';
       document.getElementById('threadFooter').style.display='none';
@@ -418,13 +414,11 @@
       document.getElementById('inputHint').textContent='Everything you share stays private.';document.getElementById('inputHint').classList.remove('good');
       document.getElementById('inputErr').classList.remove('show');document.getElementById('sendBtn').disabled=false;
       document.getElementById('modeWrite').classList.add('active');document.getElementById('modeGuided').classList.remove('active');
-      document.getElementById('startersSection').classList.remove('hidden');document.getElementById('guidedIntro').classList.remove('show');
-      scrollThread();
+      document.getElementById('startersSection').style.display='';
+      document.getElementById('inputBar').classList.remove('guided-mode');
+      window.scrollTo({top:0,behavior:'smooth'});
     }
-
-    document.getElementById('mainInput').addEventListener('keydown',function(e){
-      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}
-    });
+    document.getElementById('mainInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}});
   </script>
 </body>
 </html>
