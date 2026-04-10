@@ -2,15 +2,44 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
-
   try {
     const body = JSON.parse(event.body);
     const messages = body.messages || [{ role: 'user', content: body.symptoms }];
+    const mode = body.mode || 'write';
     const symptoms = messages[0]?.content || '';
-
-    if (!symptoms || symptoms.trim().length < 10) {
+    if (!symptoms || symptoms.trim().length < 3) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Input too short' }) };
     }
+
+    const writePrompt = `You are Nova, a pattern recognition system for people with undiagnosed conditions. Reflect what someone described, surface the specific pattern their symptoms match, and point toward a next step.
+
+Make people feel SEEN and CONNECTED. When you describe the pattern others share, make it feel like real signal from real data — specific, concrete, not generic empathy.
+
+Rules:
+- Never name a condition, diagnosis, or disease
+- Never express certainty about what is wrong
+- No clinical jargon
+- Be direct and specific
+- In the patterns field: one short intro sentence, then 2–4 short phrases on separate lines starting with — that represent the specific cluster
+
+Respond ONLY with raw JSON, no markdown, no code fences:
+{"reflection":"2-3 sentences, specific and warm. Show you heard the details.","patterns":"One intro sentence.\n— specific phrase\n— specific phrase\n— specific phrase","navigation":"2-3 sentences, concrete next step.","close":"One sentence. The beginning of something."}`;
+
+    const guidedPrompt = `You are Nova, having a gentle conversation to understand someone's undiagnosed health situation. Ask ONE thoughtful question at a time. Follow the thread naturally. After 3-5 exchanges when you understand their pattern, stop asking and deliver the full analysis.
+
+Cover naturally across the conversation: what they're experiencing, how long, what makes it worse, what doctors have said, how it's changed their life. Don't cover these systematically — follow what they give you.
+
+Rules:
+- Never name a condition, diagnosis, or disease  
+- One question at a time, conversational
+- When delivering analysis, patterns should have 2–4 specific phrases starting with —
+
+While gathering: respond ONLY with {"question":"Your single question here","done":false}
+When ready to analyze (after 3-5 exchanges): respond ONLY with {"reflection":"...","patterns":"Intro sentence.\n— phrase\n— phrase\n— phrase","navigation":"...","close":"...","done":true}
+
+No markdown, no code fences.`;
+
+    const systemPrompt = mode === 'guided' ? guidedPrompt : writePrompt;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -22,24 +51,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         model: 'claude-opus-4-5',
         max_tokens: 1200,
-        system: `You are Nova, a pattern recognition system for people with undiagnosed conditions. Your job is to reflect what someone described, surface the specific pattern their symptoms match in your data, and point toward a next step.
-
-The most important thing you do is make people feel SEEN and CONNECTED — not just heard. When you describe the pattern others share, make it feel like real signal from real data, not generic empathy. Use specific, concrete language. Name the exact sensations, timing, and experiences that cluster together.
-
-Rules:
-- Never name a condition, diagnosis, or disease
-- Never express certainty about what is wrong
-- No clinical jargon
-- Be direct and specific — vague warmth is not enough
-- In the patterns section, write 2–4 SHORT phrases (one per line, starting with —) that represent the specific cluster this person fits into. These should feel like fragments pulled from real descriptions — honest, specific, unpolished.
-
-Respond ONLY with raw JSON. No markdown, no code fences:
-{
-  "reflection": "2-3 sentences. Reflect back what they described with specificity and warmth. Show them you actually heard the details — the timing, the comparison to before, what others dismissed.",
-  "patterns": "One sentence introducing the pattern (e.g. 'In our data, these experiences appear together:'). Then 2–4 short phrases on separate lines starting with — that name the specific cluster.",
-  "navigation": "2-3 sentences on the most useful concrete next step. Be specific about who to see or what to track.",
-  "close": "One sentence. Make it feel like the beginning of something, not the end of a transaction."
-}`,
+        system: systemPrompt,
         messages: messages
       })
     });
@@ -52,22 +64,27 @@ Respond ONLY with raw JSON. No markdown, no code fences:
       const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      parsed = { reflection: raw, patterns: '', navigation: '', close: '' };
+      parsed = mode === 'guided'
+        ? { question: raw, done: false }
+        : { reflection: raw, patterns: '', navigation: '', close: '' };
     }
 
-    // Log to Airtable
-    try {
-      const latestUserMsg = [...messages].reverse().find(m => m.role === 'user')?.content || symptoms;
-      await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Submissions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ fields: { Input: latestUserMsg, Response: raw } })
-      });
-    } catch (logErr) {
-      console.error('Airtable logging failed:', logErr);
+    // Log to Airtable (only on analysis delivery, not mid-conversation questions)
+    const shouldLog = mode === 'write' || (mode === 'guided' && parsed.done === true);
+    if (shouldLog) {
+      try {
+        const latestUserMsg = [...messages].reverse().find(m => m.role === 'user')?.content || symptoms;
+        await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Submissions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ fields: { Input: latestUserMsg, Response: raw } })
+        });
+      } catch (logErr) {
+        console.error('Airtable logging failed:', logErr);
+      }
     }
 
     return {
@@ -75,7 +92,6 @@ Respond ONLY with raw JSON. No markdown, no code fences:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(parsed)
     };
-
   } catch (err) {
     console.error(err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Something went wrong' }) };
