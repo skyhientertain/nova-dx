@@ -22,7 +22,7 @@
     .j-count{background:var(--accent);color:#fff;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:500}
     .thread{flex:1;overflow-y:auto;padding:0 0 16px}
     .thread-inner{max-width:720px;margin:0 auto;padding:0 24px}
-    .welcome{padding:48px 0 28px}
+    .welcome{padding:24px 0 16px}
     .welcome h1{font-family:var(--serif);font-weight:300;font-size:clamp(24px,3vw,36px);line-height:1.2;margin-bottom:12px;color:var(--ink)}
     .welcome h1 em{font-style:italic}
     .welcome p{font-size:14px;color:var(--ink-mid);line-height:1.65;margin-bottom:28px;max-width:520px}
@@ -231,13 +231,29 @@
     function genId(){return'n'+Date.now()+'_'+Math.random().toString(36).slice(2,6);}
 
     function setMode(m){
+      if(m===mode)return;
       mode=m;
       document.getElementById('modeWrite').classList.toggle('active',m==='write');
       document.getElementById('modeGuided').classList.toggle('active',m==='guided');
       document.getElementById('startersSection').classList.toggle('hidden',m==='guided');
-      document.getElementById('guidedIntro').classList.toggle('show',m==='guided');
+      document.getElementById('guidedIntro').classList.remove('show');
       const inp=document.getElementById('mainInput');
       inp.placeholder=m==='guided'?'Reply…':'Describe what you’ve been going through…';
+      if(m==='guided'){
+        // Immediately show Nova's opening question — no API call needed
+        document.getElementById('welcomeState').style.display='none';
+        sessId=genId();hist=[];
+        const msgs=document.getElementById('messages');
+        const div=document.createElement('div');div.className='msg';
+        div.innerHTML=`<div class="msg-nova"><div class="nova-label">Nova</div><div class="nova-question">What’s the hardest part of this to explain to anyone?</div></div>`;
+        msgs.appendChild(div);
+        scrollThread(true);
+      } else {
+        // Switching back to write — reset
+        document.getElementById('messages').innerHTML='';
+        document.getElementById('welcomeState').style.display='';
+        hist=[];sessId=null;hasResponse=false;
+      }
       inp.focus();
     }
 
