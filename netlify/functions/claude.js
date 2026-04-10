@@ -58,8 +58,7 @@ Respond ONLY with raw JSON — no markdown, no code fences, no preamble. Use exa
         body: JSON.stringify({
           fields: {
             Input: symptoms,
-            Response: raw,
-            Timestamp: new Date().toISOString()
+            Response: raw
           }
         })
       });
